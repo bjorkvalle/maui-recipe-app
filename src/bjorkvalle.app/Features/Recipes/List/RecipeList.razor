@@ -1,7 +1,24 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 
-<h3>RecipeList</h3>
+<Heading Size="HeadingSize.H3">RecipeList</Heading>
+
+<ul class="menu bg-base-200 w-56 rounded-box">
+    <Loop TItem="RecipeListItem" Items="recipes" Context="item">
+        <li><a>@item.Title</a></li>
+    </Loop>
+</ul>
 
 @code {
+    [Parameter]
+    public List<RecipeDto> Items { get; set; }
 
+    private List<RecipeListItem> recipes;
+
+    protected override void OnInitialized()
+    {
+        recipes = Items.Select(x => new RecipeListItem
+            {
+                Title = x.Title
+            }).ToList();
+    }
 }

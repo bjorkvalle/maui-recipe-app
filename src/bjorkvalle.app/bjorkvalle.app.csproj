@@ -52,11 +52,13 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.5" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\bjorkvalle.data\bjorkvalle.data.csproj" />
 		<ProjectReference Include="..\bjorkvalle.infrastructure\bjorkvalle.infrastructure.csproj" />
+		<ProjectReference Include="..\bjorkvalle.logic\bjorkvalle.logic.csproj" />
 		<ProjectReference Include="..\bjorkvalle.UI\bjorkvalle.UI.csproj" />
 	</ItemGroup>
 

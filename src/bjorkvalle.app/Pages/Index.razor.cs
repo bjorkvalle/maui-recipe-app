@@ -6,6 +6,9 @@
         public DatabaseHandler<Recipe> Db { get; set; }
 
         [Inject]
+        public IRecipeService RecipeService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         private string dbFolderPath, filePath,
@@ -15,6 +18,9 @@
         private string html,
             delta;
 
+        private bool isLoading = true;
+        private List<RecipeDto> recipes;
+
         protected override async Task OnInitializedAsync()
         {
             //SecureStorage.Default.RemoveAll();
@@ -22,8 +28,12 @@
 
             if (!Db.ConnectionExists(filePath))
             {
-                //await Toast.Make("asd").Show(default);
                 NavigationManager.NavigateTo("config");
+            }
+            else
+            {
+                recipes = await RecipeService.GetAllAsync();
+                isLoading = false;
             }
         }
 

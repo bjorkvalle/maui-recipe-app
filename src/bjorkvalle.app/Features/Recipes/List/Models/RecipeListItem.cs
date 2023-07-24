@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace bjorkvalle.app.Features.Recipes.List.Models
+﻿namespace bjorkvalle.app.Features.Recipes
 {
-    internal class RecipeListItem
+    public record RecipeListItem
     {
+        public string Title { get; set; }
+        //public Dictionary<Guid, string> Tags { get; set; }
+        //public byte[] Thumbnail { get; set; }
     }
 }

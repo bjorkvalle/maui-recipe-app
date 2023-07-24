@@ -27,35 +27,37 @@ namespace bjorkvalle.data
             return _connection != null;
         }
 
-        public string GetActiveDbName(string folderPath)
-        {
-            _databasePath = Path.Combine(folderPath, _dbName);
-            _connection = new SQLiteAsyncConnection(_databasePath);
-            return _connection != null ? _dbName : "none";
-        }
-
-        public string GetActiveDbFullPath(string folderPath)
-        {
-            _databasePath = Path.Combine(folderPath, _dbName);
-            _connection = new SQLiteAsyncConnection(_databasePath);
-            return _connection != null ? _databasePath : "none";
-        }
-
-        public void ChangeDbName(string name)
-        {
-            _dbName = name;
-        }
-
         public async Task<T> GetByIdAsync(Guid id)
         {
             var entity = await _connection.FindAsync<T>(id);
+            await _connection.CloseAsync();
             return entity;
         }
 
         public async Task<List<T>> GetAllAsync()
         {
             var entities = await _connection.Table<T>().ToListAsync();
+            await _connection.CloseAsync();
             return entities;
         }
+
+        //public string GetActiveDbName(string folderPath)
+        //{
+        //    _databasePath = Path.Combine(folderPath, _dbName);
+        //    _connection = new SQLiteAsyncConnection(_databasePath);
+        //    return _connection != null ? _dbName : "none";
+        //}
+
+        //public string GetActiveDbFullPath(string folderPath)
+        //{
+        //    _databasePath = Path.Combine(folderPath, _dbName);
+        //    _connection = new SQLiteAsyncConnection(_databasePath);
+        //    return _connection != null ? _databasePath : "none";
+        //}
+
+        //public void ChangeDbName(string name)
+        //{
+        //    _dbName = name;
+        //}
     }
 }

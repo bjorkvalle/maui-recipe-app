@@ -1,10 +1,20 @@
 ﻿@page "/"
 @inject IJSRuntime JsRuntime
+@using bjorkvalle.app.Features.Recipes
 
 @*@inherits ComponentBase*@
 
 <Heading Size="HeadingSize.H1">Fuuds!</Heading>
-@dbFolderPath
+
+@if(isLoading)
+{
+    <Loading IsLoading="true" />
+}
+else 
+{
+    <RecipeList Items="recipes" />
+}
+
 @*<Paragraph>Currently selected: @dbFullPath</Paragraph>*@
 
         @*<Button Color="Color.Primary" Clicked="(() => PickFolder())">Pick folder</Button>*@
