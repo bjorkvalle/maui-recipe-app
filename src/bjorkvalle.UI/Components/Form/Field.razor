@@ -1,0 +1,21 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("form-control");
+    }
+}

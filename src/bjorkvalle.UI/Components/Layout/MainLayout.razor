@@ -1,0 +1,21 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits LayoutComponentBase
+
+<div class="drawer">
+    <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content h-screen flex flex-col">
+        <Navbar />
+        <main class="container mx-auto p-4">
+            @Body
+        </main>
+        <footer class="mt-auto footer footer-center p-4 bg-base-300 text-base-content">
+            <div>
+                <p>Copyright © 2022 - All right reserved by ACME Industries Ltd</p>
+            </div>
+        </footer>
+    </div>
+    <div class="drawer-side">
+        <label for="my-drawer-3" class="drawer-overlay"></label>
+        <Sidebar />
+    </div>
+</div>

@@ -1,0 +1,19 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <p @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </p>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("mb-5");
+    }
+}

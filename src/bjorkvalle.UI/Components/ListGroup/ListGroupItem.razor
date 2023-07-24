@@ -1,0 +1,19 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    @ChildContent
+}
+
+@code {
+    [CascadingParameter] ListGroup<TItem> ListGroup { get; set; }
+    [EditorRequired, Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ListGroup == null)
+            throw new ArgumentNullException(nameof(ListGroup), $"{nameof(ListGroupItem<TItem>)} must exist within a (${nameof(ListGroup)})");
+    }
+}

@@ -1,0 +1,22 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <a @attributes="AdditionalAttributes" class="@ClassNames" href="@Href">@ChildContent</a>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public LinkColor Color { get; set; }
+    [Parameter] public bool IsHover { get; set; }
+    [Parameter] public string Href { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("link")
+            .AddClass("link-", ClassProvider.ColorClass(Color), !Color.Equals(LinkColor.None))
+            .AddClass("link-hover", condition: IsHover);
+    }
+}

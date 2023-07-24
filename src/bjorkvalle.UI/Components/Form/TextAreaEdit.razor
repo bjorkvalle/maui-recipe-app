@@ -1,0 +1,60 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits InputTextArea
+
+<textarea id="@ElementId" placeholder="@Placeholder" disabled="@(IsDisabled || IsLoading)" class="@ClassNames" rows="@Rows" cols="@Columns"
+       @attributes="AdditionalAttributes" @bind="CurrentValueAsString" @bind:event="oninput" />
+
+@code {
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+    [Parameter] public int Rows { get; set; }
+    [Parameter] public int Columns { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("textarea textarea-bordered")
+            .AddClass("textarea-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("textarea-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+            .AddClass("blur-sm animate-pulse", IsLoading);
+    }
+
+    /// <summary>
+    /// Gets or sets the unique id of the element.
+    /// </summary>
+    /// <remarks>
+    /// Note that this ID is not defined for the component but instead for the underlined element that it represents.
+    /// eg: for the TextEdit the ID will be set on the input element.
+    /// </remarks>
+    [Parameter] public string ElementId { get; set; }
+
+    /// <summary>
+    /// Toggle component load vs unload
+    /// </summary>
+    [Parameter] public bool NoRender { get; set; }
+
+    protected readonly IClassBuilder classBuilder;
+
+    public TextAreaEdit()
+    {
+        classBuilder = new ClassBuilder();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (ElementId == null)
+            ElementId = System.IO.Path.GetRandomFileName()?.Replace(".", "") ?? "";
+
+        base.OnInitialized();
+    }
+
+    /// <summary>
+    /// Gets the built class-names based on all the rules set by the component parameters.
+    /// </summary>
+    public string ClassNames => classBuilder?
+        .AddClassFromAttributes(AdditionalAttributes)
+        .GetClass();
+}

@@ -1,0 +1,20 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits InputTextBase
+
+<input @attributes="AdditionalAttributes" @bind="CurrentValueAsString" @bind:event="oninput"
+       placeholder="@Placeholder" disabled="@IsDisabled" class="@ClassNames" />
+
+@code {
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("input input-bordered")
+            .AddClass("input-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("input-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default));
+    }
+}

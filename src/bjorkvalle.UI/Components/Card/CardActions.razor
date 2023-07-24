@@ -1,0 +1,30 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </div>
+}
+
+@code {
+    [CascadingParameter] CardBody CardBody { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Justify Justify { get; set; } = Justify.End;
+
+    protected override void OnInitialized()
+    {
+        if (CardBody == null)
+            throw new ArgumentNullException(nameof(CardBody), "CardActions must exist within a <CardBody>");
+
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("card-actions")
+            .AddClass(ClassProvider.JustifyClass(Justify));
+    }
+}

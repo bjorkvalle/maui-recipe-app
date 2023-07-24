@@ -1,0 +1,29 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <h2 @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </h2>
+}
+
+@code {
+    [CascadingParameter] CardBody CardBody { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    //[Parameter] public string Title { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (CardBody == null)
+            throw new ArgumentNullException(nameof(CardBody), "CardTitle must exist within a <CardBody>");
+
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("card-title");
+    }
+}

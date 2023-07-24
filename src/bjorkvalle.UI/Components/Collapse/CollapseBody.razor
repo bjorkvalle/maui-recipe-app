@@ -1,0 +1,26 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </div>
+}
+
+@code {
+    [CascadingParameter] Collapse Collapse { get; set; }
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Collapse == null)
+            throw new ArgumentNullException(nameof(Collapse), $"{nameof(CollapseBody)} must exist within a {nameof(Collapse)}");
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("collapse-content");
+    }
+}

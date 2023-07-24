@@ -1,0 +1,79 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits InputSelect<TItem>
+@typeparam TItem
+
+@if (!NoRender)
+{
+    <select @attributes="AdditionalAttributes" disabled="@IsDisabled" class="@ClassNames" @bind="CurrentValueAsString">
+        @if (IsOptions)
+        {
+            @if(!string.IsNullOrEmpty(Placeholder))
+            {
+                <option disabled="disabled" selected="selected" value="@(default(TItem))">@Placeholder</option>
+            }
+
+            @foreach (var opt in Options)
+            {
+                <option value="@opt.Key">@opt.Value</option>
+            }
+        }
+        else
+        {
+            @ChildContent
+        }
+    </select>
+}
+
+@code {
+    [Parameter] public Dictionary<TItem, string> Options { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("select select-bordered w-full")// max-w-xs")
+            .AddClass("select-", ClassProvider.ColorClass(Color))
+            .AddClass("select-", ClassProvider.SizeClass(Size));
+    }
+
+    public bool IsOptions => Options != null && Options.Any();
+
+    /// <summary>
+    /// Gets or sets the unique id of the element.
+    /// </summary>
+    /// <remarks>
+    /// Note that this ID is not defined for the component but instead for the underlined element that it represents.
+    /// eg: for the TextEdit the ID will be set on the input element.
+    /// </remarks>
+    [Parameter] public string ElementId { get; set; }
+
+    /// <summary>
+    /// Toggle component load vs unload
+    /// </summary>
+    [Parameter] public bool NoRender { get; set; }
+
+    protected readonly IClassBuilder classBuilder;
+
+    public Select()
+    {
+        classBuilder = new ClassBuilder();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (ElementId == null)
+            ElementId = System.IO.Path.GetRandomFileName()?.Replace(".", "") ?? "";
+
+        base.OnInitialized();
+    }
+
+    /// <summary>
+    /// Gets the built class-names based on all the rules set by the component parameters.
+    /// </summary>
+    public string ClassNames => classBuilder?
+        .AddClassFromAttributes(AdditionalAttributes)
+        .GetClass();
+}

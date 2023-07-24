@@ -1,0 +1,122 @@
+﻿@using System.Text
+@inherits UIComponentBase
+@inject IJSRuntime Js
+
+@if (!NoRender)
+{
+    @if (isOpen)
+    {
+        <div class="fixed inset-x-0 top-0 h-full backdrop-blur quick-fade-in" style="z-index:1050;">
+            <div @onclick="HandleClose" hidden="@(!isOpen)"
+                 class="bg-black opacity-25 w-full h-full absolute left-0 top-0"></div>
+
+            <div @attributes="AdditionalAttributes" class="@ClassNames">
+                <div class="card-body">
+                    <div class="flex justify-between items-center">
+                        <h2 class="card-title">@Title</h2>
+                        @if (CloseButton)
+                        {
+                            <Button Size="Size.Small" Shape="ButtonShape.Square" Clicked="Close">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </Button>
+                        }
+                    </div>
+                    @ChildContent
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    /// <summary>
+    /// Title to be rendered in the header of the card.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; }
+
+    /// <summary>
+    /// Form to be rendered inside the card body.
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// Form width.
+    /// </summary>
+    [Parameter]
+    public Size Size { get; set; } = Size.Default;
+
+    /// <summary>
+    /// Toggle shadow.
+    /// </summary>
+    [Parameter]
+    public bool Shadow { get; set; } = true;
+
+    /// <summary>
+    /// Can be used to connect e.g a modal close event to the card
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    /// <summary>
+    /// Default is false
+    /// </summary>
+    [Parameter]
+    public bool AllowOverflow { get; set; }
+
+    /// <summary>
+    /// Covers the whole page when on a small screen. Default is false
+    /// </summary>
+    [Parameter]
+    public bool OverlayOnSmallScreen { get; set; }
+
+    /// <summary>
+    /// Show close button in upper right corner. Default is false
+    /// </summary>
+    [Parameter]
+    public bool CloseButton { get; set; }
+
+    public async Task Toggle() => await HandleToggle();
+    public async Task Show() => await HandleShow();
+    public async Task Close() => await HandleClose();
+    public bool IsOpen => isOpen;
+
+    private bool isOpen = false;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("card bg-base-100 slide-in-bottom mx-auto")
+            .AddClass("w-full h-full rounded-none md:mt-5 md:rounded-lg md:h-auto", condition: OverlayOnSmallScreen)
+            .AddClass("md:w-", ClassProvider.WidthClass(Size), condition: OverlayOnSmallScreen)
+            .AddClass("w-", ClassProvider.WidthClass(Size), condition: !OverlayOnSmallScreen)
+            .AddClass("mt-5", condition: !OverlayOnSmallScreen)
+            .AddClass("shadow", Shadow);
+    }
+
+    private async Task HandleToggle()
+    {
+        if (isOpen)
+            await Close();
+        else
+            await Show();
+    }
+
+    private async Task HandleShow()
+    {
+        isOpen = true;
+        await Js.InvokeVoidAsync("disableScroll", true);
+    }
+
+    private async Task HandleClose()
+    {
+        isOpen = false;
+        await Js.InvokeVoidAsync("disableScroll", false);
+        await OnClose.InvokeAsync();
+    }
+
+    private string AllowOverflowClass => AllowOverflow ? "overflow-y-visible" : "overflow-y-auto";
+}

@@ -1,0 +1,24 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </span>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+    [Parameter] public bool IsBold { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("text-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("text-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+            .AddClass("font-bold", condition: IsBold);
+    }
+}

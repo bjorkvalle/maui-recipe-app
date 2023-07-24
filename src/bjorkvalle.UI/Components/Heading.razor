@@ -1,0 +1,48 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    @switch (Size)
+    {
+        case HeadingSize.H1:
+            <h1 class="@ClassNames">@ChildContent</h1>
+            break;
+        case HeadingSize.H2:
+            <h2 class="@ClassNames">@ChildContent</h2>
+            break;
+        case HeadingSize.H3:
+            <h3 class="@ClassNames">@ChildContent</h3>
+            break;
+        case HeadingSize.H4:
+            <h4 class="@ClassNames">@ChildContent</h4>
+            break;
+        case HeadingSize.H5:
+            <h5 class="@ClassNames">@ChildContent</h5>
+            break;
+        case HeadingSize.H6:
+            <h6 class="@ClassNames">@ChildContent</h6>
+            break;
+        default:
+            break;
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public HeadingSize Size { get; set; }
+    [Parameter] public Color Color { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("text-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("mb-4 text-3xl font-extrabold", this.Size.Equals(HeadingSize.H1))
+            .AddClass("mb-3 text-2xl font-bold", this.Size.Equals(HeadingSize.H2))
+            .AddClass("mb-2 text-lg font-bold", this.Size.Equals(HeadingSize.H3))
+            .AddClass("mb-1 font-bold", this.Size.Equals(HeadingSize.H4))
+            .AddClass("mb-0.5 text-base font-bold", this.Size.Equals(HeadingSize.H5))
+            .AddClass("sm font-bold", this.Size.Equals(HeadingSize.H6))
+            ;
+    }
+}

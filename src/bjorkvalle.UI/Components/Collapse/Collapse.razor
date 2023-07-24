@@ -1,0 +1,22 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <CascadingValue Value="this">
+        <div @attributes="AdditionalAttributes" class="@ClassNames">
+            <input type="checkbox" />
+            @ChildContent
+        </div>
+    </CascadingValue>
+}
+
+@code {
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("collapse collapse-arrow border");
+    }
+}

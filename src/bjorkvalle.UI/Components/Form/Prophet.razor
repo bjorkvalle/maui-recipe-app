@@ -1,0 +1,231 @@
+﻿@namespace bjorkvalle.UI.Components
+@typeparam TItem
+@inherits UIComponentBase
+
+<div class="flex @WideClass">
+    <div @ref="refContainer" tabindex="-1" class="relative @WideClass">
+        @if (IsSelected && IsClearable)
+        {
+            <Button IsDisabled="Disabled" @ref="refClear" Color="Color.Ghost" Shape="ButtonShape.Square" Class="@("absolute right-0 " + ButtonSizeClass)" Clicked="Clear">
+                <svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="css-8mmkcg"><path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path></svg>
+            </Button>
+        }
+        else
+        {
+            <div @onclick="(() => refInput.FocusAsync())" class="btn-square absolute flex items-center justify-center right-0 @ButtonSizeClass">
+                @*<div class="p-2 bg-white border-l-4 border-green-300">*@
+                <div class="p-2 shadow rounded @(Disabled ? "bg-base-200" : "bg-white")">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 @IconColorClass opacity-50" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        }
+        <input @ref="refInput" class="@ClassNames" style="@WideStyle" title="@currentSelected?.Replace(Replace, ReplaceWith)" placeholder="@currentSelected?.Replace(Replace, ReplaceWith)"
+               @bind="FilterVal" @bind:event="oninput" @onkeypress="HandleKeyPress" @onfocusin="OnFocusInput" disabled="@Disabled" />
+
+        @if (!forceClose)
+        {
+            <ul class="menu py-3 w-full shadow-lg bg-base-100 rounded-box z-50 max-h-52 overflow-y-auto hidden hover:flex hover:absolute peer-focus:flex peer-focus:absolute">
+                @if(!anyGroups)
+                {
+                    <li class="menu-title">
+                        <span>
+                            Resultat
+                        </span>
+                    </li>
+                }
+                @foreach (var item in Options)
+                {
+                    if(anyGroups && !item.Group.Equals(currentGroup))
+                    {
+                        currentGroup = item.Group;
+
+                        <li class="menu-title">
+                            <span>
+                                @item.Group
+                            </span>
+                        </li>
+                    }
+
+                    <li class="@((Selected != null && Selected.Equals(item.Value)) ? "bg-primary" : null)">
+                        <a @onclick="@(() => Select(item))">
+                            @item.Text?.Replace(Replace, ReplaceWith)
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public IEnumerable<ProphetItem<TItem>> Options { get; set; }
+    [Parameter] public TItem Selected { get; set; }
+    [Parameter] public EventCallback<TItem> SelectedChanged { get; set; }
+    [Parameter] public EventCallback<TItem> OnChange { get; set; }
+    [Parameter] public string Placeholder { get; set; } = "Sök";
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool IsClearable { get; set; } = true;
+
+    /// <summary>
+    /// If a value string contains logic, eg ';IsDisabled', it can be 'removed' from the Prophet view.
+    /// If the ReplaceWith parameter is null or empty the Replace value will be set to string.Empty by default
+    /// </summary>
+    [Parameter] public string Replace { get; set; } = "CrazyDefaultValue!";
+
+    /// <summary>
+    /// If a value string contains logic, eg ';IsDisabled', it can be 'removed' from the Prophet view.
+    /// This parameter decides if the value should be replaced with something specific.
+    /// Requires that the Replace parameter is set.
+    /// </summary>
+    [Parameter] public string ReplaceWith { get; set; } = string.Empty;
+
+    private IEnumerable<ProphetItem<TItem>> completeOptions;
+    private string currentSelected;
+    private ElementReference refInput, refContainer;
+    private Button refClear;
+    private string filterVal, currentGroup;
+    private bool shouldRender, forceClose, anyGroups;
+
+    //? public methods are ways to manipulate components using their @ref
+    //? Display() is used in the markup and should be private. Hence the use
+    //? of a wrapper method to access the same functionality from outside
+
+    public async Task ClearAsync(bool focus = true) => await DeselectAsync(focus);
+    public async Task SelectAsync(ProphetItem<TItem> item) => await Select(item);
+    public async Task ChangeFocusAsync() => await refInput.FocusAsync();
+    public void SetCurrentlySelected(string val) => currentSelected = val;
+
+    protected override void OnParametersSet()
+    {
+        if (Options != null && Options.Any() && completeOptions == null)
+        {
+            var existing = !Equals(Selected, default(TItem)) ? Options.FirstOrDefault(x => Selected.Equals(x.Value)) : default;
+            currentSelected = existing?.Text ?? Placeholder;
+            completeOptions = new List<ProphetItem<TItem>>(Options);// new Dictionary<TItem, string>(Options);
+            anyGroups = Options.Any(x => !string.IsNullOrEmpty(x.Group));
+            shouldRender = true;
+        }
+
+        classBuilder
+            .Begin("peer input input-bordered placeholder-gray-800 placeholder-opacity-100")
+            .AddClass("input-", ClassProvider.ColorClass(Color))
+            .AddClass("input-", ClassProvider.SizeClass(Size));
+    }
+
+    protected override bool ShouldRender()
+    {
+        // har man gjort en filtrering i den här komponenten och sen triggar ett
+        // event i en annan component så renderas den här komponenten om vilken
+        // kan resultera i ett annat sökresultat
+        // https://github.com/dotnet/aspnetcore/issues/18919
+
+        if (shouldRender)
+        {
+            shouldRender = false;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (Options != null && Options.Any())
+            {
+                await Select(Options.FirstOrDefault());
+                await Task.Delay(10);
+
+                if (IsClearable)
+                {
+                    if(refClear != null)
+                        await refClear.ChangeFocusAsync();
+                }
+                else
+                {
+                    // todo. Does not work if 'IsClearable' is set to false
+                    if(refClear != null)
+                        await refContainer.FocusAsync();
+                }
+            }
+        }
+    }
+
+    private async Task Select(ProphetItem<TItem> item)
+    {
+        forceClose = true;
+        currentSelected = item?.Text;
+        Selected = item != null ? item.Value : default;
+        FilterVal = string.Empty;
+        await SelectedChanged.InvokeAsync(Selected);
+        await OnChange.InvokeAsync(Selected);
+    }
+
+    private async Task DeselectAsync(bool focus = true)
+    {
+        Selected = default(TItem);
+        currentSelected = Placeholder;
+        await SelectedChanged.InvokeAsync(Selected);
+        await OnChange.InvokeAsync(Selected);
+
+        if (focus && refInput.Equals(default))
+            await refInput.FocusAsync();
+
+        shouldRender = true;
+    }
+
+    private void HandleFiltering()
+    {
+        Options = completeOptions
+            .Where(x => x.Text.ToLower().Contains(filterVal.ToLower()));
+    }
+
+    private async Task Clear() => await DeselectAsync(true);
+
+    public void OnFocusInput()
+    {
+        forceClose = false;
+        shouldRender = true;
+    }
+
+    private string ToColor(Color color) => color switch
+    {
+        Color.Primary => "primary",
+        Color.Secondary => "secondary",
+        Color.Accent => "accent",
+        Color.Info => "info",
+        Color.Success => "success",
+        Color.Warning => "warning",
+        Color.Error => "error",
+        _ => null
+    };
+
+    private string ToSize(Size size) => size switch
+    {
+        Size.Small => "sm",
+        Size.Large => "lg",
+        _ => null
+    };
+
+    public bool IsSelected => !Equals(Selected, default(TItem)) && (Options?.Any(x => x.Value.Equals(Selected)) ?? false);
+    public string IconColorClass => Color != Color.None ? $"text-{ToColor(Color)}" : null;
+    public string WideClass => IsWide ? $"w-full" : null;
+    public string WideStyle => IsWide ? $"width:100%" : null;
+    public bool IsWide => ClassNames.Split(" ").Contains("w-full");
+    public string ButtonSizeClass => Size != Size.Default ? $"btn-{ToSize(Size)}" : null;
+    public string FilterVal
+    {
+        get => filterVal;
+        set
+        {
+            filterVal = value;
+            HandleFiltering();
+            shouldRender = true;
+        }
+    }
+}

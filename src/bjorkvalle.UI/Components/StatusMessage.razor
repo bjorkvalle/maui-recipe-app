@@ -1,0 +1,20 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender && !string.IsNullOrEmpty(Model.Message))
+{
+        <div class="@ClassNames" @attributes="AdditionalAttributes">
+            @Model.Message
+        </div>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public StatusMessageModel Model { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("text-", ClassProvider.ColorClass(Model.Color), !Model.Status.Equals(Status.Default));
+    }
+}

@@ -1,0 +1,67 @@
+@*@namespace bjorkvalle.UI.Components
+@using System.Text;
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @onclick="CloseFilterMenu"
+         hidden="@isHiddenFilterMenu"
+         class="fixed start-0 top-0 w-full h-full"
+         style="z-index:999;"></div>
+
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        <CascadingValue Value="this">
+            @if (ToggleContent != null)
+            {
+                @ToggleContent
+            }
+            @if (MenuContent != null && !isHiddenFilterMenu)
+            {
+                <ul class="@MenuClass">
+                    @MenuContent
+                </ul>
+            }
+        </CascadingValue>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ToggleContent { get; set; }
+
+    [Parameter]
+    public RenderFragment MenuContent { get; set; }
+
+    /// <summary>
+    /// All elements are the maximum width of the dropdown menu.
+    /// </summary>
+    [Parameter]
+    public bool IsMaximised { get; set; }
+
+    private bool isHiddenFilterMenu = true;
+
+    public bool IsOpen => !isHiddenFilterMenu;
+
+    public void ToggleHiddenFilterMenu() => isHiddenFilterMenu = !isHiddenFilterMenu;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("dropdown")
+            .AddClass("show", condition: isHiddenFilterMenu);
+    }
+
+    private void CloseFilterMenu() => isHiddenFilterMenu = true;
+
+    private string MenuClass => "";
+    //new ClassBuilder()
+    //.Begin("dropdown-menu p-0 border-0 shadow z-10000")
+    //    .AddClass("show", condition: !isHiddenFilterMenu)
+    //    .AddClass("w-full", condition: IsMaximised)
+    //    .GetClass();
+
+    //new StringBuilder("dropdown-menu p-0 border-0 shadow z-10000")
+    //    .AppendIf(!isHiddenFilterMenu, " show")
+    //    .AppendIf(IsMaximised, " w-100")
+    //    .ToString();
+}*@

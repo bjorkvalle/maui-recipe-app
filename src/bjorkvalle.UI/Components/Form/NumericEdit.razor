@@ -1,0 +1,56 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits InputNumber<TItem>
+@typeparam TItem
+
+<input @attributes="AdditionalAttributes" type="number" disabled="@IsDisabled" class="@ClassNames"
+       @bind="CurrentValueAsString" @bind:event="oninput" />
+
+@code {
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("input input-bordered")
+            .AddClass("input-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("input-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default));
+    }
+
+    /// <summary>
+    /// Gets or sets the unique id of the element.
+    /// </summary>
+    /// <remarks>
+    /// Note that this ID is not defined for the component but instead for the underlined element that it represents.
+    /// eg: for the TextEdit the ID will be set on the input element.
+    /// </remarks>
+    [Parameter] public string ElementId { get; set; }
+
+    /// <summary>
+    /// Toggle component load vs unload
+    /// </summary>
+    [Parameter] public bool NoRender { get; set; }
+
+    protected readonly IClassBuilder classBuilder;
+
+    public NumericEdit()
+    {
+        classBuilder = new ClassBuilder();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (ElementId == null)
+            ElementId = System.IO.Path.GetRandomFileName()?.Replace(".", "") ?? "";
+
+        base.OnInitialized();
+    }
+
+    /// <summary>
+    /// Gets the built class-names based on all the rules set by the component parameters.
+    /// </summary>
+    public string ClassNames => classBuilder?
+        .AddClassFromAttributes(AdditionalAttributes)
+        .GetClass();
+}

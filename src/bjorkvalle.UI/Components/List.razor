@@ -1,0 +1,19 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <ul @attributes="AdditionalAttributes" class="@ClassNames">@ChildContent</ul>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public ListStyleTypes ListStyleType { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("my-5 list-inside")
+            .AddClass(ClassProvider.ListStyleTypeClass(ListStyleType), condition: !ListStyleType.Equals(ListStyleTypes.None));
+    }
+}

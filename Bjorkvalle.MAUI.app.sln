@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Presentation", "01 Presentation", "{98BAD08F-0D44-431D-A709-A1C91C6E2851}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Data", "02 Data", "{5D7076E3-4E16-45C1-B9B2-0340C081A802}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bjorkvalle.infrastructure", "src\bjorkvalle.infrastructure\bjorkvalle.infrastructure.csproj", "{86C94B6D-2425-49DF-A6B6-469C355436D5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bjorkvalle.UI", "src\bjorkvalle.UI\bjorkvalle.UI.csproj", "{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bjorkvalle.app", "src\bjorkvalle.app\bjorkvalle.app.csproj", "{D8B75534-4DE3-4913-AE4F-14D701D00B79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bjorkvalle.data", "src\bjorkvalle.data\bjorkvalle.data.csproj", "{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Shared", "03 Shared", "{BD37A619-C20D-4DB3-B4CB-F2437AF0B0CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86C94B6D-2425-49DF-A6B6-469C355436D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C94B6D-2425-49DF-A6B6-469C355436D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C94B6D-2425-49DF-A6B6-469C355436D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C94B6D-2425-49DF-A6B6-469C355436D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{86C94B6D-2425-49DF-A6B6-469C355436D5} = {BD37A619-C20D-4DB3-B4CB-F2437AF0B0CF}
+		{B55C414D-72E9-4EF1-8EC0-D3D30CDABE50} = {98BAD08F-0D44-431D-A709-A1C91C6E2851}
+		{D8B75534-4DE3-4913-AE4F-14D701D00B79} = {98BAD08F-0D44-431D-A709-A1C91C6E2851}
+		{C081A799-DB1A-4623-B2C6-7BC3EAA04ADC} = {5D7076E3-4E16-45C1-B9B2-0340C081A802}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36DD8C28-5A36-400B-8029-CFA247856183}
+	EndGlobalSection
+EndGlobal

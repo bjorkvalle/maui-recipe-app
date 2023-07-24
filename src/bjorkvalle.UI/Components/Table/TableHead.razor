@@ -1,0 +1,73 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    <th @attributes="AdditionalAttributes" role="columnheader" class="@ClassNames"
+    @onclick="(() => Sort(Field))" @onmouseover="HandleMouseOver" @onmouseout="HandleMouseOut">
+
+        <span class="flex items-center" style="@IsRightStyle">
+            @ChildContent
+
+            @if (!IsSortByEvent && Sortable)
+            {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 @IsVisibleClass @IsAscendingClass" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            }
+            else if (IsSortByEvent && Sortable)
+            {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-5 @IsEventVisibleClass @IsEventAscendingClass" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            }
+        </span>
+    </th>
+}
+
+@code {
+    [CascadingParameter] Table<TItem> Table { get; set; }
+    [Parameter] public string Field { get; set; }
+    [Parameter] public bool Sortable { get; set; } = true;
+    [Parameter] public Align Align { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback<string> OnSortChanged { get; set; }
+
+    private bool isHovering;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("cursor-pointer", condition: Sortable)
+            .AddClass("text-right", condition: Align.Equals(Align.Right));
+    }
+
+    private async Task Sort(string field)
+    {
+        if (Sortable)
+        {
+            if (IsSortByEvent)
+            {
+                await OnSortChanged.InvokeAsync(field);
+            }
+            else
+            {
+                Table.SortTable(Field);
+            }
+        }
+    }
+
+    private void HandleMouseOver() => isHovering = true;
+    private void HandleMouseOut() => isHovering = false;
+
+    public string IsVisibleClass => IsActive || (!IsActive && isHovering) ? "visible" : "invisible";
+    public bool IsActive => Field == (Table?.CurrentSortColumn ?? default);
+    public string IsRightStyle => Align == Align.Right ? "flex-direction: row-reverse;" : null;
+    public string IsAscendingClass => IsActive && (!Table?.IsSortedAscending ?? default) ? "transform rotate-180" : null;
+    public bool IsSortByEvent => OnSortChanged.HasDelegate;
+    
+    public bool IsEventActive => Field == (Table?.EventSortColumn ?? default);
+    public string IsEventVisibleClass => IsEventActive || (!IsEventActive && isHovering) ? "visible" : "invisible";
+    public string IsEventAscendingClass => IsEventActive && (!Table?.EventSortAscending ?? default) ? "transform rotate-180" : null;
+}

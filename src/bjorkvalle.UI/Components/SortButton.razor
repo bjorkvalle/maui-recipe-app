@@ -1,0 +1,31 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits Button
+
+@if (!NoRender)
+{
+    <Button @attributes="AdditionalAttributes" Size="@Size" Color="@Color" Clicked="@Clicked" IsOutline="@IsButtonOutline">
+        @ChildContent
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 @IconClass">
+            <path fill-rule="evenodd" d="M10 5a.75.75 0 01.75.75v6.638l1.96-2.158a.75.75 0 111.08 1.04l-3.25 3.5a.75.75 0 01-1.08 0l-3.25-3.5a.75.75 0 111.08-1.04l1.96 2.158V5.75A.75.75 0 0110 5z" clip-rule="evenodd" />
+        </svg>
+    </Button>
+}
+
+@code {
+    [EditorRequired, Parameter] public string Current { get; set; }
+    [EditorRequired, Parameter] public bool IsAscending { get; set; }
+    [EditorRequired, Parameter] public string Name { get; set; }
+
+    public bool IsCurrent => Current.Equals(Name, StringComparison.InvariantCultureIgnoreCase);
+    public string IconClass => IsCurrent && !IsAscending ? "rotate-180" : null;
+
+    public bool IsButtonOutline => IsOutline.HasValue
+        ? IsOutline.Value
+        : !IsCurrent;
+
+    public new Color Color => !IsCurrent
+        ? Color.None
+        : !base.Color.Equals(Color.None)
+            ? base.Color
+            : Color.Secondary;
+}

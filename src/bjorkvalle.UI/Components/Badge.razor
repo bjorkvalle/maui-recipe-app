@@ -1,0 +1,29 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassNames" @onclick="Clicked">
+        @ChildContent
+    </span>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Size Size { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public bool IsOutline { get; set; }
+    [Parameter] public EventCallback Clicked { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("badge gap-2")
+            .AddClass("badge-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+            .AddClass("badge-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("cursor-pointer", condition: Clicked.HasDelegate)
+            .AddClass("hover:opacity-80", condition: Clicked.HasDelegate)
+            .AddClass("hover:shadow", condition: Clicked.HasDelegate)
+            .AddClass("badge-outline", condition: IsOutline);
+    }
+}

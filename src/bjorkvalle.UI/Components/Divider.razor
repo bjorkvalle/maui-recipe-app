@@ -1,0 +1,27 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </span>
+}
+
+@code {
+    [Parameter] 
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// Default is false
+    /// </summary>
+    [Parameter] 
+    public bool IsHorizontal { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("divider")
+            .AddClass("divider-horizontal", condition: IsHorizontal);
+    }
+}

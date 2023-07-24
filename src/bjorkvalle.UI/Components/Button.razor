@@ -1,0 +1,41 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <button @ref="refInput" @attributes="AdditionalAttributes" role="button" class="@ClassNames" disabled="@IsDisabled" @onclick="Clicked" >
+        @ChildContent
+    </button>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> Clicked { get; set; }
+    [Parameter] public bool? IsOutline { get; set; }
+    [Parameter] public bool IsBlock { get; set; }
+    [Parameter] public bool IsWide { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+    [Parameter] public ButtonShape Shape { get; set; }
+
+    private ElementReference refInput;
+
+    public async Task ChangeFocusAsync() => await refInput.FocusAsync();
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("btn")
+            .AddClass("btn-", ClassProvider.ButtonColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("btn-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+            .AddClass("btn-", ClassProvider.ButtonShapeClass(Shape), !Shape.Equals(ButtonShape.Default))
+            .AddClass("btn-active", condition: IsActive)
+            .AddClass("btn-outline", condition: IsOutline.HasValue && IsOutline.Value)
+            .AddClass("btn-block", condition: IsBlock)
+            .AddClass("btn-wide", condition: IsWide)
+            .AddClass("loading", condition: IsLoading);
+    }
+}

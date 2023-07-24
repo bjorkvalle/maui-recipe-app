@@ -1,0 +1,63 @@
+﻿@using System.Reflection
+@using System.Linq.Expressions;
+@using System.ComponentModel.DataAnnotations;
+@namespace bjorkvalle.UI.Components
+@inherits InputCheckbox
+@typeparam TItem
+
+<label class="cursor-pointer label justify-start gap-2">
+    <input @attributes="AdditionalAttributes" type="checkbox" disabled="@IsDisabled" class="@ClassNames" @bind="CurrentValue" />
+    
+    @if (ChildContent == null)
+    {
+        <span class="label-text">@Label</span>
+    }
+    else
+    {
+        <span class="label-text">@ChildContent</span>
+    }
+</label>
+
+@code {
+    [Parameter] public Expression<Func<TItem>> For { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public CheckboxColor Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("checkbox")
+            .AddClass("checkbox-", ClassProvider.ColorClass(Color), !Color.Equals(CheckboxColor.None))
+            .AddClass("checkbox-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default));
+    }
+
+    private string Label => GetDisplayName();
+
+    private string GetDisplayName()
+    {
+        var expression = (MemberExpression)For.Body;
+        var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+        return value?.Name ?? expression.Member.Name ?? "";
+    }
+
+    /// <summary>
+    /// Toggle component load vs unload
+    /// </summary>
+    [Parameter] public bool NoRender { get; set; }
+
+    protected readonly IClassBuilder classBuilder;
+
+    public CheckboxFor()
+    {
+        classBuilder = new ClassBuilder();
+    }
+
+    /// <summary>
+    /// Gets the built class-names based on all the rules set by the component parameters.
+    /// </summary>
+    public string ClassNames => classBuilder?
+        .AddClassFromAttributes(AdditionalAttributes)
+        .GetClass();
+}

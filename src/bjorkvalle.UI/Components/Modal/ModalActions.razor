@@ -1,0 +1,21 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        @ChildContent
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Justify Justify { get; set; } = Justify.End;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("modal-action")
+            .AddClass(ClassProvider.JustifyClass(Justify));
+    }
+}

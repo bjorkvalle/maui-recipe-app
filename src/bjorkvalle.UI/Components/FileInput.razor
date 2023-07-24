@@ -1,0 +1,32 @@
+﻿@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <input @attributes="AdditionalAttributes" class="@ClassNames" type="file" @onchange="HandleValueChanged" />
+}
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public Size Size { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("file-input file-input-bordered w-full max-w-xs")
+            .AddClass("file-input-", "bordered", Color.Equals(Color.None))
+            .AddClass("file-input-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("file-input-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default));
+    }
+
+    private async Task HandleValueChanged(ChangeEventArgs args)
+    {
+        Value = args.Value.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

@@ -1,0 +1,46 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    @if (LoadOnSelect)
+    {
+        @if (ActiveClass.Equals("block"))
+        {
+            <div @attributes="AdditionalAttributes" class="@ClassNames">
+                @ChildContent
+            </div>
+        }
+    }
+    else
+    {
+        @if (ActiveClass.Equals("block"))
+        {
+            <div @attributes="AdditionalAttributes" class="@ClassNames">
+                @ChildContent
+            </div>
+        }
+    }
+}
+
+@code {
+    [CascadingParameter] TabContainer TabContainer { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Name { get; set; }
+
+    /// <summary>
+    /// Complete re-initialize of component, e.g if you want to access the lifecycle events
+    /// </summary>
+    [Parameter] public bool LoadOnSelect { get; set; }
+
+    public string ActiveClass => TabContainer.IsSelected(Name) ? "block" : "hidden";
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("")
+            //.Begin("animate-fade-in", condition: TabContainer.IsSelected(Name))
+            .AddClass("block", condition: TabContainer.IsSelected(Name))
+            .AddClass("hidden", condition: !TabContainer.IsSelected(Name));
+    }
+}

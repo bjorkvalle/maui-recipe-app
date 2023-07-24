@@ -1,0 +1,255 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    if (ItemsIsNullOrEmpty)
+    {
+        if (EmptyContent != null)
+        {
+            @EmptyContent
+        }
+    }
+    else
+    {
+        <CascadingValue Value="this">
+            <div class="flex flex-col-reverse lg:flex-row gap-2 p-3">
+
+                @*@if (SortContent != null || IsSortEditable)*@
+                <div class="flex flex-wrap items-center gap-2">
+                    @SortContent
+                    @*
+            @if (IsSortEditable)
+            {
+            <Button title="Edit sort options" Size="ButtonSize.Small" Shape="ButtonShape.Square" Color="ButtonColor.Ghost" Clicked="ToggleSortEditable">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+            <path d="M10 3.75a2 2 0 10-4 0 2 2 0 004 0zM17.25 4.5a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM5 3.75a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM4.25 17a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM17.25 17a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM9 10a.75.75 0 01-.75.75h-5.5a.75.75 0 010-1.5h5.5A.75.75 0 019 10zM17.25 10.75a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM14 10a2 2 0 10-4 0 2 2 0 004 0zM10 16.25a2 2 0 10-4 0 2 2 0 004 0z" />
+            </svg>
+            </Button>
+            }
+            *@
+                    <select class="select select-bordered select-sm" @bind="@ItemSize">
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="-1">All</option>
+                    </select>
+                    <Button Size="Size.Small" Shape="ButtonShape.Square" Color="@(IsCompact ? Color.None : Color.Ghost)" Clicked="ToggleCompact" class="hidden md:flex" title="Compact list">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                            <path d="M3.28 2.22a.75.75 0 00-1.06 1.06L5.44 6.5H2.75a.75.75 0 000 1.5h4.5A.75.75 0 008 7.25v-4.5a.75.75 0 00-1.5 0v2.69L3.28 2.22zM13.5 2.75a.75.75 0 00-1.5 0v4.5c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-2.69l3.22-3.22a.75.75 0 00-1.06-1.06L13.5 5.44V2.75zM3.28 17.78l3.22-3.22v2.69a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.69l-3.22 3.22a.75.75 0 101.06 1.06zM13.5 14.56l3.22 3.22a.75.75 0 101.06-1.06l-3.22-3.22h2.69a.75.75 0 000-1.5h-4.5a.75.75 0 00-.75.75v4.5a.75.75 0 001.5 0v-2.69z" />
+                        </svg>
+                    </Button>
+                    <Button NoRender="IsFilterButtonHidden" Size="Size.Small" Shape="ButtonShape.Square" Color="Color.Ghost" Clicked="(() => refFilterModal.Show())" title="Filter">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                            <path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.591L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" />
+                        </svg>
+                    </Button>
+                    <Badge Size="bjorkvalle.UI.Enums.Size.Small" Color="Color.Accent" IsOutline="true" Clicked="(() => Console.WriteLine())">Active</Badge>
+                </div>
+                @if (Filterable)
+                {
+                    <ListGroupFilter TItem="TItem" OnFilter="HandleFilter" />
+                }
+            </div>
+            @if (FilterItemsIsNullOrEmpty)
+            {
+                <Alert Type="AlertTypes.None">Empty list</Alert>
+            }
+            else
+            {
+                <ul @attributes="AdditionalAttributes" class="menu p-1 @ClassNames" role="list">
+                    <Loop TItem="TItem" Items="FilteredItems" Context="item" Virtualize="Virtualize">
+                        @if (ItemTemplate != null)
+                        {
+                            <li role="listitem" @key="item">
+                                @ItemTemplate(item)
+                            </li>
+                        }
+                    </Loop>
+                </ul>
+            }
+        </CascadingValue>
+    }
+
+    <Modal @ref="refFilterModal">
+        <ModalBody IsCloseButtonVisible="false">
+            @FilterContent
+            <ModalActions>
+                <Button Clicked="(() => refFilterModal.Close())" Color="Color.Ghost">Cancel</Button>
+                <Button Color="Color.Primary">Filter</Button>
+            </ModalActions>
+        </ModalBody>
+    </Modal>
+}
+
+@code {
+    [EditorRequired, Parameter] public IEnumerable<TItem> Items { get; set; }
+    [EditorRequired, Parameter] public RenderFragment<TItem> ItemTemplate { get; set; }
+    [Parameter] public RenderFragment EmptyContent { get; set; }
+    [Parameter] public RenderFragment SortContent { get; set; }
+    [Parameter] public RenderFragment FilterContent { get; set; }
+    [Parameter] public string SortingDefault { get; set; }
+    [Parameter] public int SizeDefault { get; set; } = 10;
+    [Parameter] public bool IsCompact { get; set; }
+    [Parameter] public bool Virtualize { get; set; }
+    [Parameter] public string[] FilterFields { get; set; }
+    [Parameter] public bool Filterable { get; set; }
+
+    /// <summary>
+    /// Overrides component's standalone sort and uses external source, e.g api call
+    /// </summary>
+    [Parameter] public EventCallback<string> OnSortChanged { get; set; }
+
+    /// <summary>
+    /// Overrides component's standalone size handler and uses external source, e.g api call
+    /// </summary>
+    [Parameter] public EventCallback<int> OnSizeChanged { get; set; }
+
+    /// <summary>
+    /// Allows the user to edit which columns are available to sort
+    /// </summary>
+    [Parameter] public bool IsSortEditable { get; set; }
+
+    /// <summary>
+    /// This can be used in case sorting is done by event. It sets the active sorting column
+    /// </summary>
+    [Parameter] public string EventSortColumn { get; set; }
+
+    /// <summary>
+    /// This can be used in case sorting is done by event. It sets the sorting arrow's direction
+    /// </summary>
+    [Parameter] public bool EventSortAscending { get; set; }
+
+    /// <summary>
+    /// This can be used in case sorting is done by event. It sets the list size
+    /// </summary>
+    [Parameter] public int EventSize { get; set; }
+
+    public string currentSortColumn;
+    private bool isSortedAscending;
+    private string filterVal;
+    private int size;
+    private Modal refFilterModal;
+
+    protected override void OnInitialized()
+    {
+        size = SizeDefault;
+
+        if (Items != null && !string.IsNullOrEmpty(SortingDefault) && !IsSortByEvent)
+            SortTable(SortingDefault);
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("menu-compact", IsCompact)
+            //.AddClass("pt-3", condition: SortContent != null)
+            ;
+    }
+
+    internal void SortTable(string columnName)
+    {
+        //Sorting against a column that is not currently sorted against.
+        if (columnName != currentSortColumn)
+        {
+            //We need to force order by ascending on the new column
+            Items = Items.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            currentSortColumn = columnName;
+            isSortedAscending = true;
+        }
+        else //Sorting against same column but in different direction
+        {
+            if (isSortedAscending)
+                Items = Items.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            else
+                Items = Items.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+
+            isSortedAscending = !isSortedAscending;
+        }
+        StateHasChanged();
+    }
+
+    private void HandleFilter(string filter) => filterVal = filter;
+    private void ToggleCompact()
+    {
+        IsCompact = !IsCompact;
+        OnParametersSet();
+    }
+
+    private void HandleSizeChange(ChangeEventArgs args)
+    {
+        //size = (int)args.Value;
+    }
+
+    public IEnumerable<TItem> FilteredItems => Items
+        .Take(ItemSize)
+        .Where(x =>
+        {
+            if (!string.IsNullOrEmpty(filterVal))
+            {
+                if (FilterFieldsIsNullOrEmpty)
+                {
+                    var values = x.GetType().GetProperties().Select(y => y.GetValue(x, null)).ToList();
+                    return string.Join("", values).Contains(filterVal, StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    return FilterFields
+                        .Any(field => x.GetType().GetProperty(field).GetValue(x, null).ToString().Contains(filterVal, StringComparison.InvariantCultureIgnoreCase));
+                }
+            }
+            else
+                return false;
+        });
+
+    public int ItemSize
+    {
+        get
+        {
+            return IsSizeByEvent ? EventSize : size;
+        }
+        private set
+        {
+            size = value;
+
+            if (OnSizeChanged.HasDelegate)
+            {
+                EventSize = value;
+                OnSizeChanged.InvokeAsync(EventSize);
+            }
+        }
+    }
+
+    public string CurrentSortColumn
+    {
+        get
+        {
+            return IsSortByEvent ? EventSortColumn : currentSortColumn;
+        }
+        private set
+        {
+            currentSortColumn = value;
+        }
+    }
+
+    public bool IsSortedAscending
+    {
+        get
+        {
+            return isSortedAscending || EventSortAscending;
+        }
+        private set
+        {
+            isSortedAscending = value;
+        }
+    }
+
+    public bool IsSortByEvent => OnSortChanged.HasDelegate;
+    public bool IsSizeByEvent => OnSizeChanged.HasDelegate;
+
+    public bool IsFilterButtonHidden => FilterContent is null;
+    public bool ItemsIsNullOrEmpty => Items == null || !Items.Any();
+    public bool FilterFieldsIsNullOrEmpty => FilterFields == null || !FilterFields.Any();
+    public bool FilterItemsIsNullOrEmpty => FilteredItems == null || !FilteredItems.Any();
+}

@@ -1,0 +1,35 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        @if (IsCloseButtonVisible)
+        {
+            <Button Clicked="ModalContainer.Close" Size="Size.Small" Shape="ButtonShape.Circle" class="absolute right-2 top-2">✕</Button>
+        }
+        @ChildContent
+    </div>
+}
+
+@code {
+    [CascadingParameter] Modal ModalContainer { get; set; }
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool IsCloseButtonVisible { get; set; } = true;
+
+    protected override void OnInitialized()
+    {
+        if (ModalContainer == null)
+            throw new ArgumentNullException(nameof(Modal), "ModalBody must exist within a Modal Container (Modal)");
+
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("modal-box relative")
+            .AddClass("opacity-95", condition: ModalContainer.IsLoading)
+            .AddClass(ClassProvider.ModalSize(ModalContainer.Size), condition: !ModalContainer.Size.Equals(ModalSize.Default));
+    }
+}

@@ -1,0 +1,127 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    if (!Items.Any() || Items == null)
+    {
+        if (EmptyContent != null)
+        {
+            @EmptyContent
+        }
+    }
+    else
+    {
+        <table @attributes="AdditionalAttributes" class="@ClassNames">
+            @if (ColGroup != null)
+            {
+                <colgroup>
+                    @ColGroup
+                </colgroup>
+            }
+            <CascadingValue Value="this">
+                <thead role="rowgroup">
+                    @HeadContent
+                </thead>
+                <tbody role="rowgroup">
+                    @if (!Virtualize)
+                    {
+                        @foreach (var item in Items)
+                        {
+                            @if (RowTemplate != null)
+                            {
+                                <tr role="row" @key="item" @onclick="(() => OnClickedRow.InvokeAsync(item))" class="@ClickedRowClass">
+                                    @RowTemplate(item)
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <Virtualize Context="item" Items="Items.ToList()" TItem="TItem">
+                            @if (RowTemplate != null)
+                            {
+                                <tr role="row" @key="item" @onclick="(() => OnClickedRow.InvokeAsync(item))" class="@ClickedRowClass">
+                                    @RowTemplate(item)
+                                </tr>
+                            }
+                        </Virtualize>
+                    }
+                </tbody>
+            </CascadingValue>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment EmptyContent { get; set; }
+    [Parameter] public RenderFragment ColGroup { get; set; }
+    [Parameter] public RenderFragment HeadContent { get; set; }
+    [Parameter] public RenderFragment<TItem> RowTemplate { get; set; }
+    [Parameter] public IEnumerable<TItem> Items { get; set; }
+    [Parameter] public string SortingDefault { get; set; }
+    [Parameter] public bool IsCompact {get; set;}
+    [Parameter] public bool Virtualize { get; set; }
+    [Parameter] public EventCallback<TItem> OnClickedRow { get; set; }
+
+    /// <summary>
+    /// This can be used in case sorting is done by event. It sets the active sorting column
+    /// </summary>
+    [Parameter] public string EventSortColumn {get; set;}
+
+    /// <summary>
+    /// This can be used in case sorting is done by event. It sets the sorting arrow's direction
+    /// </summary>
+    [Parameter] public bool EventSortAscending {get; set;}
+
+    #region members
+
+    public string CurrentSortColumn;
+    public bool IsSortedAscending;
+
+    #endregion
+
+    protected override void OnInitialized()
+    {
+        if (Items != null && !string.IsNullOrEmpty(SortingDefault))
+            SortTable(SortingDefault);
+
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("table w-full")
+            .AddClass("table-compact", IsCompact);
+    }
+
+    internal void SortTable(string columnName)
+    {
+
+        //Sorting against a column that is not currently sorted against.
+        if (columnName != CurrentSortColumn)
+        {
+            //We need to force order by ascending on the new column
+            //This line uses reflection and will probably
+            //perform inefficiently in a production environment.
+            Items = Items.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            CurrentSortColumn = columnName;
+            IsSortedAscending = true;
+        }
+        else //Sorting against same column but in different direction
+        {
+            if (IsSortedAscending)
+                Items = Items.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+            else
+                Items = Items.OrderBy(x => x.GetType().GetProperty(columnName).GetValue(x, null)).ToList();
+
+            IsSortedAscending = !IsSortedAscending;
+        }
+        StateHasChanged();
+    }
+
+    public bool IsClickedRowEvent => OnClickedRow.HasDelegate;
+    public string ClickedRowClass => IsClickedRowEvent ? "cursor-pointer hover" : null;
+}

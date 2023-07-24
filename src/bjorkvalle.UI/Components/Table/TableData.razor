@@ -1,0 +1,23 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    <td @attributes="AdditionalAttributes" role="gridcell" colspan="@ColSpan" class="@ClassNames">
+        @ChildContent
+    </td>
+}
+
+@code {
+    [CascadingParameter] Table<TItem> Table { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Align Align { get; set; }
+    [Parameter] public int ColSpan { get; set; } = 1;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("text-", ClassProvider.AlignClass(Align));
+    }
+}

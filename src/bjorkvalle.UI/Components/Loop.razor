@@ -1,0 +1,36 @@
+﻿@namespace bjorkvalle.UI.Components
+@typeparam TItem
+
+@if (!Hidden)
+{
+    @if (Items != null)
+    {
+
+        @if (!Virtualize)
+        {
+            @foreach (var item in Items)
+            {
+                @if(ChildContent != null)
+                {    
+                    @ChildContent(item)
+                }
+            }
+        }
+        else
+        {
+            <Virtualize Context="item" Items="Items.ToList()" TItem="TItem">
+                @if (ChildContent != null)
+                {
+                    @ChildContent(item)
+                }
+            </Virtualize>
+        }
+    }
+}
+
+@code {
+    [Parameter] public IEnumerable<TItem> Items { get; set; }
+    [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
+    [Parameter] public bool Virtualize { get; set; }
+    [Parameter] public bool Hidden { get; set; }
+}

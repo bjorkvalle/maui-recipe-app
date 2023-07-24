@@ -1,0 +1,226 @@
+﻿@using Microsoft.JSInterop;
+@inherits UIComponentBase
+
+@if (!NoRender)
+{
+    @if (editorEnabled)
+    {
+        <div id="toolbar">
+            <div class="ql-formats">
+                <select class="ql-font">
+                    <option selected=""></option>
+                    <option value="serif"></option>
+                    <option value="monospace"></option>
+                </select>
+                <select class="ql-size">
+                    <option value="small"></option>
+                    <option selected=""></option>
+                    <option value="large"></option>
+                    <option value="huge"></option>
+                </select>
+            </div>
+            <div class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </div>
+            <div class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </div>
+            <div class="ql-formats">
+                <button class="ql-script" value="sub" type="button"></button>
+                <button class="ql-script" value="super" type="button"></button>
+            </div>
+            <div class="ql-formats">
+                <button class="ql-header ql-active" value="1" type="button"></button>
+                <button class="ql-header" value="2" type="button"></button>
+                <button class="ql-blockquote" type="button"></button>
+                <button class="ql-code-block" type="button"></button>
+            </div>
+            <div class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+            </div>
+            <div class="ql-formats">
+                <button class="ql-direction" value="rtl" type="button"></button>
+                <select class="ql-align">
+                    <option selected=""></option>
+                    <option value="center"></option>
+                    <option value="right"></option>
+                    <option value="justify"></option>
+                </select>
+            </div>
+            <div class="ql-formats">
+                <button type="button" class="ql-link"></button>
+                <button type="button" class="ql-image"></button>
+                <button type="button" class="ql-video"></button>
+            </div>
+        </div>
+    }
+
+    <div @attributes="AdditionalAttributes" class="@ClassNames" @ref="@divEditorElement" />
+
+    @if (IsDebug)
+    {
+        <br />
+        <button class="btn btn-primary" @onclick="GetText">Get Text</button>
+        <button class="btn btn-primary" @onclick="GetHTML">Get HTML</button>
+        <button class="btn btn-primary" @onclick="GetEditorContent">Get Content</button>
+        <br />
+
+        @*<br />
+        <button class="btn btn-danger" @onclick="SaveContent">Save Content</button>
+        <button class="btn btn-success" @onclick="LoadContent">Load Saved Content</button>
+        <br />
+
+        <br />
+        <button class="btn btn-info" @onclick="DisableQuillEditor">Disable Editor</button>
+        <button class="btn btn-secondary" @onclick="EnableQuillEditor">Enable Editor</button>
+        <br />*@
+
+        <br />
+        <div>
+            @editorContent
+        </div>
+        <div>
+            @(
+                (MarkupString)@editorHTMLContent
+                )
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public string Html { get; set; }
+
+    [Parameter]
+    public string Delta { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TextChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> HtmlChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> DeltaChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnContentChanged { get; set; }
+
+    [Parameter]
+    public bool IsDebug { get; set; }
+
+    private IJSObjectReference quill;
+    //private string strSavedContent = "";
+    private ElementReference divEditorElement;
+    private string editorContent;
+    private string editorHTMLContent;
+    private bool editorEnabled = true;
+
+    public async Task<string> GetTextAsync() => await GetText();
+    public async Task<string> GetHTMLAsync() => await GetHTML();
+
+    /// <summary>
+    /// Quill's strict subset of JSON known as 'Delta''
+    /// </summary>
+    /// <returns></returns>
+    public async Task<string> GetDeltaAsync() => await GetEditorContent();
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetObjectReference = DotNetObjectReference.Create(this);
+            quill = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "QuillFunctions.createQuill", divEditorElement, Constants.RichTextDebugLevels.NONE, dotNetObjectReference);
+
+            if (!string.IsNullOrEmpty(Delta))
+            {
+                await JSRuntime.InvokeAsync<object>("QuillFunctions.loadQuillContent", divEditorElement, Delta);
+            }
+        }
+    }
+
+    [JSInvokable]
+    public async Task HandleEditorChange()
+    {
+        Text = await GetText();
+        await TextChanged.InvokeAsync(Text);
+
+        Html = await GetHTML();
+        await HtmlChanged.InvokeAsync(Html);
+
+        Delta = await GetEditorContent();
+        await DeltaChanged.InvokeAsync(Delta);
+
+        await OnContentChanged.InvokeAsync();
+    }
+
+    public void Dispose()
+    {
+        quill?.DisposeAsync();
+    }
+
+    private async Task<string> GetText()
+    {
+        editorContent = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillText", divEditorElement);
+
+        return editorContent;
+    }
+
+    private async Task<string> GetHTML()
+    {
+        editorHTMLContent = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillHTML", divEditorElement);
+
+        return editorHTMLContent;
+    }
+
+    private async Task<string> GetEditorContent()
+    {
+        editorContent = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillContent", divEditorElement);
+
+        return editorContent;
+    }
+
+    //private async Task SaveContent()
+    //{
+    //    strSavedContent = await JSRuntime.InvokeAsync<string>(
+    //        "QuillFunctions.getQuillContent", divEditorElement);
+    //}
+
+    //private async Task LoadContent()
+    //{
+    //    var QuillDelta = await JSRuntime.InvokeAsync<object>(
+    //        "QuillFunctions.loadQuillContent", divEditorElement, strSavedContent);
+    //}
+
+    //private async Task DisableQuillEditor()
+    //{
+    //    await JSRuntime.InvokeAsync<object>(
+    //        "QuillFunctions.disableQuillEditor", divEditorElement);
+    //}
+
+    //private async Task EnableQuillEditor()
+    //{
+    //    await JSRuntime.InvokeAsync<object>(
+    //        "QuillFunctions.enableQuillEditor", divEditorElement);
+    //}
+}

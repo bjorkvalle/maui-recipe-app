@@ -1,0 +1,56 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits UIComponentBase
+
+<CascadingValue Value="this">
+    <div @attributes="AdditionalAttributes" class="@ClassNames">
+        @Items
+    </div>
+     @if(LayoutTemplate is null)
+        {
+            @Content
+        }
+        else
+        {
+            @LayoutTemplate(@: @{
+                @Content
+            }
+            )
+        }
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment<RenderFragment> LayoutTemplate { get; set; }
+    [Parameter] public string DefaultTab { get; set; }
+    [Parameter] public RenderFragment Items { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public EventCallback<string> OnChange { get; set; }
+    [Parameter] public TabTypes Type { get; set; }
+
+    private string selected;
+
+    protected override void OnInitialized()
+    {
+        selected = DefaultTab;
+    }
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("tabs");
+    }
+
+    public bool IsSelected(string tab) => tab.Equals(selected);
+
+    public async Task SetSelected(string title)
+    {
+
+        if (selected == title)
+            return;
+
+        selected = title;
+        await OnChange.InvokeAsync(selected);
+        StateHasChanged();
+    }
+
+    public string SelectedTab => selected;
+}

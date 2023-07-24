@@ -1,0 +1,13 @@
+﻿@namespace bjorkvalle.UI.Components
+@inherits LabelFor<string>
+
+<LabelFor TItem="string">
+    @if (Empty)
+    {
+        @:&nbsp;
+    }
+    else
+    {
+        @ChildContent
+    }
+</LabelFor>
