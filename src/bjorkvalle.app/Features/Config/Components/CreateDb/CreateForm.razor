@@ -1,0 +1,101 @@
+﻿@namespace bjorkvalle.app.Features.Config
+@inject DatabaseHandler<EntityBase> Db
+
+<EditForm Model="model" class="flex flex-wrap gap-2 fade-out">
+    <Field>
+        <LabelFor For="(() => model.DbName)" IsRequired />
+        <div class="join">
+            <TextEdit @bind-Value="model.DbName" class="join-item"></TextEdit>
+            <label class="join-item flex items-center px-4 bg-base-300">
+                <span>.@format</span>
+            </label>
+        </div>
+        <ValidationMessage For="(() => model.DbName)" />
+    </Field>
+    <Field>
+        <LabelFor For="(() => model.FolderPath)" IsRequired />
+        <Button Color="Color.Secondary" Clicked="PickFolder">Select folder</Button>
+        <InputInfo>@model.FolderPath</InputInfo>
+        <ValidationMessage For="(() => model.FolderPath)" />
+    </Field>
+    <Field>
+        <Label Empty />
+        <Button Color="Color.Primary" Clicked="(() => refPopup?.Show())" IsDisabled="@(!ValidPath)">Save</Button>
+    </Field>
+</EditForm>
+
+<Popup @ref="refPopup" Title="Confirm database location" OverlayOnSmallScreen>
+    <Paragraph class="mt-2 truncate w-96 md:w-full" title="@CompletePath">@CompletePath</Paragraph>
+
+    <Alert Type="AlertTypes.Error" NoRender="string.IsNullOrEmpty(saveError)">@saveError</Alert>
+
+    <div class="flex justify-end gap-2">
+        <Button Color="Color.Ghost" Clicked="refPopup.Close">Cancel</Button>
+        <Button Color="Color.Primary" Clicked="Save">Save</Button>
+    </div>
+</Popup>
+
+@code {
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+
+    private CreateModel model = new();
+    private Popup refPopup;
+    private string saveError, format = "sqlite3";
+
+    private async Task PickFolder()
+    {
+        try
+        {
+            var result = await FolderPicker.Default.PickAsync(default);
+
+            if (result.IsSuccessful)
+            {
+                model.FolderPath = result.Folder.Path;
+            }
+            else
+            {
+                await Toast
+                    .Make(
+                        $"The folder was not picked with error: {result.Exception.Message}",
+                        ToastDuration.Short
+                    )
+                    .Show(default);
+            }
+        }
+        catch (Exception ex)
+        {
+            await Toast.Make($"Exception: {ex.Message}", ToastDuration.Long).Show(default);
+        }
+    }
+
+    private async Task PromptSave()
+    {
+        saveError = string.Empty;
+        await refPopup.Show();
+    }
+
+    private async Task Save()
+    {
+        saveError = string.Empty;
+
+        try
+        {
+            var dbName = $"{model.DbName}.{format}";
+            await Db.CreateDatabase(model.FolderPath, dbName);
+            await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, CompletePath);
+            await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_NAME, dbName);
+            await refPopup.Close();
+            await OnSave.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            saveError = ex.Message;
+        }
+    }
+
+    private bool ValidPath => !string.IsNullOrEmpty(CompletePath);
+    private string CompletePath => !string.IsNullOrEmpty(model.FolderPath) && !string.IsNullOrEmpty(model.DbName)
+        ? Path.Combine(model.FolderPath, $"{model.DbName}.{format}")
+        : string.Empty;
+}

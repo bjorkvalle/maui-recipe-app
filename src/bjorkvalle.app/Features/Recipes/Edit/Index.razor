@@ -1,0 +1,51 @@
+﻿@page "/recipes/{id:guid}"
+@namespace bjorkvalle.app.Features.Recipes.Edit
+@*@inject NavigationManager NavigationManager*@
+
+<Heading Size="HeadingSize.H1">Edit recipe</Heading>
+
+<Paragraph>@currentId</Paragraph>
+
+@*@if (!Id.HasValue)
+    {
+        <div class="border rounded bg-base-50 p-3">
+            @if (!model.BlogPosts.IsNullOrEmpty())
+            {
+                <Overview Items="model.BlogPosts" OnRefresh="SetBlogPostListItems" />
+            }
+            else
+            {
+                <Loading IsLoading="isInit" />
+            }
+        </div>
+    }
+    else
+    {
+        if (currentId.HasValue)
+        {
+            <div class="border rounded bg-base-50 p-3">
+                <Edit BlogId="currentId.Value"
+                      OnDelete="HandleDelete"
+                      OnSave="HandleSave"
+                      Sections="model.BlogSectionDict"
+                      Tags="model.ContentTagsDict"/>
+            </div>
+        }
+    }*@
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Guid currentId;
+
+    protected override void OnParametersSet()
+    {
+        var isIdChanged = currentId != Id;
+
+        if (isIdChanged)
+        {
+            currentId = Id;
+        }
+    }
+}

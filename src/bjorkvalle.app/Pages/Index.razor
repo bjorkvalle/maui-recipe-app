@@ -1,0 +1,27 @@
+﻿@page "/"
+@inject IJSRuntime JsRuntime
+
+@*@inherits ComponentBase*@
+
+<Heading Size="HeadingSize.H1">Fuuds!</Heading>
+@dbFolderPath
+@*<Paragraph>Currently selected: @dbFullPath</Paragraph>*@
+
+        @*<Button Color="Color.Primary" Clicked="(() => PickFolder())">Pick folder</Button>*@
+@*<div class="flex gap-2">
+    @if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+    {
+        <Button Color="Color.Primary" Clicked="SelectFolderAndCreateDatabase">Init db</Button>
+    }
+
+    @if (DeviceInfo.Current.Platform == DevicePlatform.WinUI
+    || DeviceInfo.Current.Platform == DevicePlatform.Android)
+    {
+        <Button Color="Color.Secondary" Clicked="(() => PickFile())">Pick db file</Button>
+    }
+</div>
+
+<div class="mt-2 flex-column flex-col gap-2">
+    <RichTextEditor class="bg-white" @ref="refRichText" @bind-Html="@html" @bind-Delta="@delta" />
+    <Button Color="Color.Primary" Clicked="Save">Save recipe</Button>
+</div>*@

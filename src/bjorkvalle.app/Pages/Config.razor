@@ -1,0 +1,46 @@
+﻿@page "/config"
+@using bjorkvalle.app.Features.Config
+@namespace bjorkvalle.app.Pages
+@inject NavigationManager NavigationManager
+
+<Heading Size="HeadingSize.H1">Setup SQLite</Heading>
+
+<Paragraph class="truncate w-80 md:w-full" title="@currentDb">
+    <Text Color="Color.Info">
+        Current db: <strong>@currentDb</strong>
+    </Text>
+</Paragraph>
+
+@if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+{
+    <Heading Size="HeadingSize.H2">Create database</Heading>
+
+    <CreateForm OnSave="HandleSave" />
+
+    <Divider>Or</Divider>
+}
+
+<Heading Size="HeadingSize.H2">Select database</Heading>
+
+<SelectDb OnSelect="HandleSave" />
+
+@code {
+    private string currentDb;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SetCurrentDb();
+    }
+
+    private async Task HandleSave()
+    {
+        await SetCurrentDb();
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task SetCurrentDb()
+    {
+        var db = await SecureStorage.GetAsync(Constants.Storage.Keys.DB_FILE_NAME);
+        currentDb = !string.IsNullOrEmpty(db) ? db : "None";
+    }
+}

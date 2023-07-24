@@ -1,0 +1,36 @@
+﻿@namespace bjorkvalle.app.Features.Config
+@inject DatabaseHandler<EntityBase> Db
+
+<Button Color="Color.Secondary" Clicked="PickFile">Pick db file</Button>
+
+<Alert Type="AlertTypes.Error" NoRender="string.IsNullOrEmpty(pickFileError)" class="mt-2">@pickFileError</Alert>
+
+@code {
+    [Parameter]
+    public EventCallback OnSelect { get; set; }
+
+    private string pickFileError;
+
+    private async Task<FileResult> PickFile()
+    {
+        pickFileError = string.Empty;
+
+        try
+        {
+            var result = await FilePicker.Default.PickAsync();
+
+            if (result != null)
+            {
+                await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_NAME, result.FileName);
+                await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, result.FullPath);
+                await OnSelect.InvokeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            pickFileError = ex.Message;
+        }
+
+        return null;
+    }
+}
