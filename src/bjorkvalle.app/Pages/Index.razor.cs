@@ -1,4 +1,6 @@
-﻿namespace bjorkvalle.app.Pages
+﻿using System.Xml.Linq;
+
+namespace bjorkvalle.app.Pages
 {
     public partial class Index : ComponentBase
     {
@@ -24,10 +26,13 @@
         protected override async Task OnInitializedAsync()
         {
             //SecureStorage.Default.RemoveAll();
-            filePath = await SecureStorage.Default.GetAsync(Constants.Storage.Keys.DB_FILE_PATH);
+            filePath = await SecureStorage.Default.GetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH);
 
-            if (!Db.ConnectionExists(filePath))
+            if (!Db.IsDbExists(filePath))
             {
+                SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_NAME);
+                SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_PATH);
+                SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_FULLPATH);
                 NavigationManager.NavigateTo("config");
             }
             else
@@ -50,6 +55,17 @@
             {
                 await Toast.Make(ex.Message, ToastDuration.Long).Show(default);
             }
+        }
+
+        private async Task Insert()
+        {
+            await RecipeService.Create(new RecipeDto
+            {
+                Title = "Random" + Guid.NewGuid().ToString().Substring(0, 5),
+                Delta = "asd",
+                Html = "dsa"
+            });
+            recipes = await RecipeService.GetAllAsync();
         }
     }
 }

@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Shared", "04 Shared", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Logic", "02 Logic", "{36CD29D4-2EEE-4C7C-95DE-BE4FAF410B91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bjorkvalle.logic", "src\bjorkvalle.logic\bjorkvalle.logic.csproj", "{2072FF35-FF29-4C1E-AA99-F3F0E08663E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bjorkvalle.logic", "src\bjorkvalle.logic\bjorkvalle.logic.csproj", "{2072FF35-FF29-4C1E-AA99-F3F0E08663E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

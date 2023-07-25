@@ -1,0 +1,16 @@
+﻿@namespace bjorkvalle.app.Features.Recipes
+
+<h3>RecipeForm</h3>
+
+@code {
+    /// <summary>
+    /// When updating
+    /// </summary>
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+
+    private CreateFormModel model = new();
+}

@@ -6,14 +6,14 @@
 
 <Heading Size="HeadingSize.H1">Fuuds!</Heading>
 
-@if(isLoading)
-{
-    <Loading IsLoading="true" />
-}
-else 
+<Button Clicked="Insert">Insert+</Button>
+
+@if(!recipes.IsNullOrEmpty())
 {
     <RecipeList Items="recipes" />
 }
+
+<Loading IsLoading="isLoading" />
 
 @*<Paragraph>Currently selected: @dbFullPath</Paragraph>*@
 

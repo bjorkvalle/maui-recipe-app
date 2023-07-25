@@ -1,10 +1,11 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
+@inject IRecipeService RecipeService
 
 <Heading Size="HeadingSize.H3">RecipeList</Heading>
 
 <ul class="menu bg-base-200 w-56 rounded-box">
-    <Loop TItem="RecipeListItem" Items="recipes" Context="item">
-        <li><a>@item.Title</a></li>
+    <Loop TItem="RecipeListItem" Items="Recipes" Context="item">
+        <li><Button Clicked="(() => Delete(item.Id))">@item.Title</Button></li>
     </Loop>
 </ul>
 
@@ -12,13 +13,25 @@
     [Parameter]
     public List<RecipeDto> Items { get; set; }
 
-    private List<RecipeListItem> recipes;
+    //private List<RecipeListItem> recipes;
 
-    protected override void OnInitialized()
+    //protected override void OnInitialized()
+    //{
+    //    recipes = Items.Select(x => new RecipeListItem
+    //        {
+    //            Id = x.Id,
+    //            Title = x.Title
+    //        }).ToList();
+    //}
+
+    private async Task Delete(Guid recipeId)
     {
-        recipes = Items.Select(x => new RecipeListItem
-            {
-                Title = x.Title
-            }).ToList();
+        await RecipeService.Delete(recipeId);
     }
+
+    private List<RecipeListItem> Recipes => Items.Select(x => new RecipeListItem
+        {
+            Id = x.Id,
+            Title = x.Title
+        }).ToList();
 }

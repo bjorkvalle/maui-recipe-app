@@ -62,9 +62,4 @@
 		<ProjectReference Include="..\bjorkvalle.UI\bjorkvalle.UI.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Features\Recipes\Components\Form\" />
-	  <Folder Include="Features\Recipes\Components\" />
-	</ItemGroup>
-
 </Project>

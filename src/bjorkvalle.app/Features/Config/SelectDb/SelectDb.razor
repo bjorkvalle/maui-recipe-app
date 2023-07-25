@@ -21,8 +21,10 @@
 
             if (result != null)
             {
+                var filePath = result.FullPath.RemoveKeywordFromEnd(result.FileName, StringComparison.OrdinalIgnoreCase);
                 await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_NAME, result.FileName);
-                await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, result.FullPath);
+                await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, filePath);
+                await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH, result.FullPath);
                 await OnSelect.InvokeAsync();
             }
         }

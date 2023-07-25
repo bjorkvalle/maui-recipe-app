@@ -83,8 +83,9 @@
         {
             var dbName = $"{model.DbName}.{format}";
             await Db.CreateDatabase(model.FolderPath, dbName);
-            await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, CompletePath);
             await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_NAME, dbName);
+            await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, model.FolderPath);
+            await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH, CompletePath);
             await refPopup.Close();
             await OnSave.InvokeAsync();
         }

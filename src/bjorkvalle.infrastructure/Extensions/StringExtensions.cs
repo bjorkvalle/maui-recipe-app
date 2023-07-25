@@ -87,5 +87,17 @@
             //? space separated string, e.g TotalDigital -> Total Digital
             //Console.WriteLine(System.Text.RegularExpressions.Regex.Replace(input, "([A-Z])", " $1", System.Text.RegularExpressions.RegexOptions.Compiled).Trim());
         }
+
+        public static string RemoveKeywordFromEnd(this string inputString, string keyword, StringComparison comparison)
+        {
+            // Check if the keyword exists at the end of the inputString
+            if (inputString.EndsWith(keyword, comparison))
+            {
+                // Remove the keyword from the end of the inputString
+                return inputString.Substring(0, inputString.Length - keyword.Length);
+            }
+
+            return inputString;
+        }
     }
 }

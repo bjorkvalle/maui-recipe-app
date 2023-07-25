@@ -1,6 +1,5 @@
 ﻿@page "/config"
 @using bjorkvalle.app.Features.Config
-@namespace bjorkvalle.app.Pages
 @inject NavigationManager NavigationManager
 
 <Heading Size="HeadingSize.H1">Setup SQLite</Heading>
@@ -8,6 +7,12 @@
 <Paragraph class="truncate w-80 md:w-full" title="@currentDb">
     <Text Color="Color.Info">
         Current db: <strong>@currentDb</strong>
+    </Text>
+</Paragraph>
+
+<Paragraph title="@currentDbPath">
+    <Text Color="Color.Info">
+        Current db path: <strong>@currentDbPath</strong>
     </Text>
 </Paragraph>
 
@@ -25,7 +30,7 @@
 <SelectDb OnSelect="HandleSave" />
 
 @code {
-    private string currentDb;
+    private string currentDb, currentDbPath;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,6 +46,8 @@
     private async Task SetCurrentDb()
     {
         var db = await SecureStorage.GetAsync(Constants.Storage.Keys.DB_FILE_NAME);
+        var dbPath = await SecureStorage.GetAsync(Constants.Storage.Keys.DB_FILE_PATH);
         currentDb = !string.IsNullOrEmpty(db) ? db : "None";
+        currentDbPath = !string.IsNullOrEmpty(dbPath) ? dbPath : "None";
     }
 }
