@@ -1,0 +1,12 @@
+﻿@namespace bjorkvalle.app.Features.Recipes
+
+<div class="rich-preview">
+    @(
+        (MarkupString)Html
+        )
+</div>
+
+@code {
+    [Parameter]
+    public string Html { get; set; }
+}

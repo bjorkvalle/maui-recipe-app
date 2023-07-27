@@ -56,6 +56,8 @@
             {
                 Id = entity.Id,
                 Title = entity.Title,
+                CoverImg = entity.CoverImg,
+                Source = entity.Source,
                 Html = entity.Html,
                 Delta = entity.Delta,
             };
@@ -67,6 +69,8 @@
             {
                 Id = dto.Id,
                 Title = dto.Title,
+                CoverImg = dto.CoverImg,
+                Source = dto.Source,
                 Html = dto.Html,
                 Delta = dto.Delta,
             };

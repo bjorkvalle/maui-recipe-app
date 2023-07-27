@@ -44,6 +44,9 @@ module.exports = {
             },
             maxWidth: {
                 'xxs': '10rem',
+            },
+            backdropBrightness: {
+                25: '.25',
             }
         },
     },

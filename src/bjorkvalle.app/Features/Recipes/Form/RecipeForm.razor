@@ -3,10 +3,27 @@
 @inject NavigationManager NavigationManager
 
 <EditForm Model="model" class="flex flex-wrap gap-2 fade-out">
-    <Field>
+    <Field class="w-full">
         <LabelFor For="(() => model.Title)" IsRequired />
         <TextEdit @bind-Value="model.Title"></TextEdit>
         <ValidationMessage For="(() => model.Title)" />
+    </Field>
+    <Field class="w-full">
+        <LabelFor For="(() => model.CoverImg)" IsRequired />
+        <TextEdit ValueChanged="OnCoverSelect"
+                  ValueExpression="@( () => coverImgUrl)"
+                  Value="@coverImgUrl"
+                  Placeholder="https://"></TextEdit>
+        <ValidationMessage For="(() => model.CoverImg)" />
+    </Field>
+    @if (!string.IsNullOrEmpty(model.CoverImg))
+    {
+        <img src="@model.CoverImg" />
+    }
+    <Field class="w-full">
+        <LabelFor For="(() => model.Source)" IsRequired />
+        <TextEdit @bind-Value="model.Source" Placeholder="https://"></TextEdit>
+        <ValidationMessage For="(() => model.Source)" />
     </Field>
     <Field class="w-full">
         <LabelFor For="(() => model.Html)" IsRequired />
@@ -17,7 +34,7 @@
     <Button Color="Color.Primary" Clicked="Save">Save</Button>
 </EditForm>
 
-<Alert Type="AlertTypes.Error" NoRender="string.IsNullOrEmpty(saveError)">@saveError</Alert>
+<Alert Type="AlertTypes.Error" NoRender="string.IsNullOrEmpty(error)">@error</Alert>
 
 @code {
     /// <summary>
@@ -30,7 +47,8 @@
     public EventCallback OnSave { get; set; }
 
     private CreateFormModel model = new();
-    private string saveError;
+    private string error, coverImgUrl;
+    private byte[] coverImg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,43 +60,69 @@
                     Title = dto.Title,
                     Delta = dto.Delta,
                     Html = dto.Html,
+                    CoverImg = dto.CoverImg,
+                    Source = dto.Source,
                 };
         }
     }
 
+    private async Task OnCoverSelect(string url)
+    {
+        error = string.Empty;
+
+        if (Uri.TryCreate(url, UriKind.Absolute, out Uri resultUri))
+        {
+            // The Uri.TryCreate method returns true if the URL is valid
+            // and stores the parsed Uri in the resultUri variable.
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    var imgByteArray = await httpClient.GetByteArrayAsync(resultUri);
+                    var base64String = "data:image/jpeg;base64," + Convert.ToBase64String(imgByteArray);
+                    model.CoverImg = base64String;
+                }
+                catch (Exception ex)
+                {
+                    error = ex.Message;
+                }
+            }
+        }
+        coverImgUrl = url;
+    }
+
     private async Task Save()
     {
-        saveError = string.Empty;
+        error = string.Empty;
 
         try
         {
             //todo move to pages?
 
+            var dto = new RecipeDto
+                {
+                    Id = Id.HasValue ? Id.Value : Guid.Empty,
+                    Title = model.Title,
+                    Html = model.Html,
+                    Delta = model.Delta,
+                    CoverImg = model.CoverImg,
+                    Source = model.Source,
+                };
+
             if (Id.HasValue)
             {
-                await RecipeService.Update(new RecipeDto
-                    {
-                        Id = Id.Value,
-                        Title = model.Title,
-                        Html = model.Html,
-                        Delta = model.Delta
-                    });
+                await RecipeService.Update(dto);
             }
             else
             {
-                await RecipeService.Create(new RecipeDto
-                    {
-                        Title = model.Title,
-                        Html = model.Html,
-                        Delta = model.Delta
-                    });
+                await RecipeService.Create(dto);
             }
 
             NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
-            saveError = ex.Message;
+            error = ex.Message;
         }
     }
 }

@@ -1,0 +1,29 @@
+.rich-preview {
+}
+
+.rich-preview img {
+    max-width: 100%;
+}
+
+.rich-preview ::deep h1 {
+    font-size: 1.4rem;
+    color: #27253d;
+    font-weight: bold;
+    line-height: 1.1em;
+}
+
+.rich-preview ::deep h2 {
+    font-size: 1.2rem;
+    color: #27253d;
+    font-weight: bold;
+    line-height: 1.1em;
+}
+
+.rich-preview ::deep p {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.rich-preview ::deep a {
+    text-decoration-line: underline;
+}

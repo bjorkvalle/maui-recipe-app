@@ -1,0 +1,28 @@
+﻿@namespace bjorkvalle.app.Features.Recipes
+
+<Card>
+    <CardBody>
+        @*<Heading Size="HeadingSize.H2">@Recipe.Title</Heading>*@
+        <figure class="z-10 flex flex-col items-center overflow-hidden relative rounded-xl shadow-xl">
+            <img src="@Recipe.CoverImg" class="rounded-xl" />
+            <figcaption class="absolute glass backdrop-brightness-25 w-full bottom-0 px-3 py-2 text-center">
+                <span class="text-lg font-bold text-slate-300">
+                    @Recipe.Title
+                </span>
+                <br>
+                <span class="badge gap-2 badge-sm glass backdrop-brightness-50 text-slate-300">
+                    Vegan
+                </span>
+                <span class="badge gap-2 badge-sm glass backdrop-brightness-50 text-slate-300">
+                    High protein
+                </span>
+            </figcaption>
+        </figure>
+        <RecipeContent Html="@Recipe.Html" />
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter]
+    public RecipeDto Recipe { get; set; }
+}

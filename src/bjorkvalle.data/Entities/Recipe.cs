@@ -9,6 +9,12 @@ namespace bjorkvalle.data.Entities
         [MaxLength(250), Unique]
         public string Title { get; set; }
 
+        [Column("cover_image")]
+        public string CoverImg { get; set; }
+
+        [Column("source")]
+        public string Source { get; set; }
+
         [Column("html")]
         public string Html { get; set; }
 
