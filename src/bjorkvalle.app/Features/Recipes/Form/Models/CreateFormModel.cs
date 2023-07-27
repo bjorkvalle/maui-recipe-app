@@ -8,8 +8,8 @@ namespace bjorkvalle.app.Features.Recipes
         public string Title { get; set; }
 
         [Display(Name = "Html")]
-        public string Html { get; init; }
+        public string Html { get; set; }
 
-        public string Delta { get; init; }
+        public string Delta { get; set; }
     }
 }

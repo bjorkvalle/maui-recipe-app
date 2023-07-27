@@ -1,0 +1,30 @@
+﻿@page "/recipes/{id:guid}"
+@inject IRecipeService RecipeService
+@*@inject NavigationManager NavigationManager*@
+
+<Heading Size="HeadingSize.H1">@recipe.Title</Heading>
+
+@if (!string.IsNullOrEmpty(recipe.Html))
+{
+    <div class="rich-preview">
+    @(
+        (MarkupString)recipe.Html
+    )
+    </div>
+}
+else
+{
+    <Alert Type="AlertTypes.Info">No HTML saved.</Alert>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private RecipeDto recipe = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipe = await RecipeService.GetById(Id);
+    }
+}

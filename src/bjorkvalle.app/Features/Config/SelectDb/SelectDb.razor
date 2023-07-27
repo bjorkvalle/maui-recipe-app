@@ -25,6 +25,7 @@
                 await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_NAME, result.FileName);
                 await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_PATH, filePath);
                 await SecureStorage.SetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH, result.FullPath);
+                await Db.ConnectDatabase(filePath, result.FileName);
                 await OnSelect.InvokeAsync();
             }
         }

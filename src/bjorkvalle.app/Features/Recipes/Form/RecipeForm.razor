@@ -1,6 +1,23 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
+@inject IRecipeService RecipeService
+@inject NavigationManager NavigationManager
 
-<h3>RecipeForm</h3>
+<EditForm Model="model" class="flex flex-wrap gap-2 fade-out">
+    <Field>
+        <LabelFor For="(() => model.Title)" IsRequired />
+        <TextEdit @bind-Value="model.Title"></TextEdit>
+        <ValidationMessage For="(() => model.Title)" />
+    </Field>
+    <Field class="w-full">
+        <LabelFor For="(() => model.Html)" IsRequired />
+        <RichTextEditor class="bg-white" @bind-Delta="model.Delta" @bind-Html="model.Html" />
+        <ValidationMessage For="(() => model.Html)" />
+    </Field>
+
+    <Button Color="Color.Primary" Clicked="Save">Save</Button>
+</EditForm>
+
+<Alert Type="AlertTypes.Error" NoRender="string.IsNullOrEmpty(saveError)">@saveError</Alert>
 
 @code {
     /// <summary>
@@ -13,4 +30,55 @@
     public EventCallback OnSave { get; set; }
 
     private CreateFormModel model = new();
+    private string saveError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            var dto = await RecipeService.GetById(Id.Value);
+            model = new CreateFormModel
+                {
+                    Title = dto.Title,
+                    Delta = dto.Delta,
+                    Html = dto.Html,
+                };
+        }
+    }
+
+    private async Task Save()
+    {
+        saveError = string.Empty;
+
+        try
+        {
+            //todo move to pages?
+
+            if (Id.HasValue)
+            {
+                await RecipeService.Update(new RecipeDto
+                    {
+                        Id = Id.Value,
+                        Title = model.Title,
+                        Html = model.Html,
+                        Delta = model.Delta
+                    });
+            }
+            else
+            {
+                await RecipeService.Create(new RecipeDto
+                    {
+                        Title = model.Title,
+                        Html = model.Html,
+                        Delta = model.Delta
+                    });
+            }
+
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            saveError = ex.Message;
+        }
+    }
 }

@@ -37,9 +37,8 @@
         await SetCurrentDb();
     }
 
-    private async Task HandleSave()
+    private void HandleSave()
     {
-        await SetCurrentDb();
         NavigationManager.NavigateTo("/");
     }
 

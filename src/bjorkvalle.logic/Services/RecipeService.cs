@@ -2,9 +2,11 @@
 {
     public interface IRecipeService
     {
-        Task<List<RecipeDto>> GetAllAsync();
-        Task Delete(Guid recipeId);
+        Task<List<RecipeDto>> GetAll();
+        Task<RecipeDto> GetById(Guid id);
         Task Create(RecipeDto dto);
+        Task Update(RecipeDto dto);
+        Task Delete(Guid recipeId);
     }
 
     public class RecipeService : IRecipeService
@@ -16,12 +18,18 @@
             _db = db;
         }
 
-        public async Task<List<RecipeDto>> GetAllAsync()
+        public async Task<List<RecipeDto>> GetAll()
         {
             var entities = await _db.GetAllAsync();
             var dtos = entities?.Select(x => MapToDto(x)).ToList() ?? new();
-
             return dtos;
+        }
+
+        public async Task<RecipeDto> GetById(Guid id)
+        {
+            var entity = await _db.GetByIdAsync(id);
+            var dto = MapToDto(entity);
+            return dto;
         }
 
         public async Task Delete(Guid recipeId)
@@ -33,8 +41,13 @@
         {
             var entity = MapToEntity(dto);
             entity.Id = Guid.NewGuid();
-
             await _db.CreateAsync(entity);
+        }
+
+        public async Task Update(RecipeDto dto)
+        {
+            var entity = MapToEntity(dto);
+            await _db.UpdateAsync(entity);
         }
 
         private RecipeDto MapToDto(Recipe entity)

@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace bjorkvalle.app.Pages
+﻿namespace bjorkvalle.app.Pages
 {
     public partial class Index : ComponentBase
     {
@@ -28,7 +26,7 @@ namespace bjorkvalle.app.Pages
             //SecureStorage.Default.RemoveAll();
             filePath = await SecureStorage.Default.GetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH);
 
-            if (!Db.IsDbExists(filePath))
+            if (!Db.TryDbConnection(filePath))
             {
                 SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_NAME);
                 SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_PATH);
@@ -37,7 +35,7 @@ namespace bjorkvalle.app.Pages
             }
             else
             {
-                recipes = await RecipeService.GetAllAsync();
+                recipes = await RecipeService.GetAll();
                 isLoading = false;
             }
         }
@@ -65,7 +63,7 @@ namespace bjorkvalle.app.Pages
                 Delta = "asd",
                 Html = "dsa"
             });
-            recipes = await RecipeService.GetAllAsync();
+            recipes = await RecipeService.GetAll();
         }
     }
 }

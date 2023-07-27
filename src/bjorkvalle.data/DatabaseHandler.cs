@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using SQLite;
+﻿using SQLite;
 
 namespace bjorkvalle.data
 {
@@ -17,24 +16,22 @@ namespace bjorkvalle.data
             await Init();
         }
 
-        public bool IsDbExists(string filePath)
+        public async Task ConnectDatabase(string folderPath, string dbName)
+        {
+            var filePath = Path.Combine(folderPath, dbName);
+            _dbName = dbName;
+            _dbFilePath = filePath;
+            await Init();
+        }
+
+        public bool TryDbConnection(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return false;
 
             _dbFilePath = filePath;
-            _connection = new SQLiteAsyncConnection(filePath);
             return File.Exists(filePath);
         }
-
-        //public void ConnectToDatabase(string filePath)
-        //{
-        //    if (string.IsNullOrEmpty(filePath))
-        //        throw new Exception("Missing db filepath");
-
-        //    //_dbFilePath = filePath;
-        //    _connection = new SQLiteAsyncConnection(filePath);
-        //}
 
         public async Task<T> GetByIdAsync(Guid id)
         {
@@ -59,7 +56,7 @@ namespace bjorkvalle.data
         public async Task UpdateAsync(T entity)
         {
             await Init();
-            var updatedRows = await _connection.InsertAsync(entity);
+            var updatedRows = await _connection.UpdateAsync(entity);
         }
 
         public async Task DeleteAsync(Guid id)
