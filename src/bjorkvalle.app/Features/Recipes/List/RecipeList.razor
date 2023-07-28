@@ -3,9 +3,9 @@
 
 <Heading Size="HeadingSize.H3">RecipeList</Heading>
 
-<ul class="menu bg-base-200 w-56 rounded-box">
+<ul class="menu bg-base-200 rounded-box">
     <Loop TItem="RecipeListItem" Items="Recipes" Context="item">
-        <li><a href="@($"recipes/{item.Id}")">@item.Title</a></li>
+        <li><a href="@($"recipes/{item.Id}")" title="@item.Title" class="flex">@item.Title</a></li>
         @*<li><Button Clicked="(() => Delete(item.Id))">@item.Title</Button></li>*@
     </Loop>
 </ul>

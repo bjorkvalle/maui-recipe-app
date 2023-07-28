@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+.steve::before, .steve::after, .steve::before, .steve::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.steve::before {
+    box-shadow: inset 0px 0px 20px 5px rgba(0, 0, 0, 1);
+}
+
+.steve::after {
+    box-shadow: inset 0px 0px 20px 5px rgba(0, 0, 0, 1);
+}
+
 html, body {
     font-family: 'Roboto', Calibri, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

@@ -1,26 +1,38 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 
-<Card>
-    <CardBody>
-        @*<Heading Size="HeadingSize.H2">@Recipe.Title</Heading>*@
-        <figure class="z-10 flex flex-col items-center overflow-hidden relative rounded-xl shadow-xl">
-            <img src="@Recipe.CoverImg" class="rounded-xl" />
-            <figcaption class="absolute glass backdrop-brightness-25 w-full bottom-0 px-3 py-2 text-center">
-                <span class="text-lg font-bold text-slate-300">
-                    @Recipe.Title
-                </span>
-                <br>
-                <span class="badge gap-2 badge-sm glass backdrop-brightness-50 text-slate-300">
-                    Vegan
-                </span>
-                <span class="badge gap-2 badge-sm glass backdrop-brightness-50 text-slate-300">
-                    High protein
-                </span>
-            </figcaption>
-        </figure>
-        <RecipeContent Html="@Recipe.Html" />
-    </CardBody>
-</Card>
+<div class="relative">
+    <img src="@Recipe.CoverImg" class="h-96 w-full object-cover" />
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent"></div>
+    <Button Color="Color.Ghost" class="absolute top-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+    </Button>
+    <Button Color="Color.Ghost" class="absolute top-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+    </Button>
+</div>
+
+<div class="w-full p-4 bg-black">
+    <div class="w-full p-6 bg-base-100 rounded-2xl">
+        <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
+        <Badge Color="Color.Ghost">
+            Veganskt
+        </Badge>
+        <Badge Color="Color.Ghost">
+            Hög protein
+        </Badge>
+        <div class="pt-6">
+            <div class="rich-preview">
+                @(
+                    (MarkupString)Recipe.Html
+                    )
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]

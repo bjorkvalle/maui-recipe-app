@@ -2,9 +2,11 @@
 @using bjorkvalle.app.Features.Recipes
 @inject NavigationManager NavigationManager
 
-<Heading Size="HeadingSize.H1">Edit recipe</Heading>
+<div class="p-4">
+    <Heading Size="HeadingSize.H1">Edit recipe</Heading>
 
-<RecipeForm OnSave="HandleSave" Id="Id" />
+    <RecipeForm OnSave="HandleSave" Id="Id" />
+</div>
 
 @code {
     [Parameter]
