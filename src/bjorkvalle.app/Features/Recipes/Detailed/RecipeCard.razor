@@ -1,40 +1,17 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
+@inject NavigationManager NavigationManager
 
-<div class="relative">
-    <img src="@Recipe.CoverImg" class="h-96 w-full object-cover" />
-    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent"></div>
-    <Button Color="Color.Ghost" class="absolute top-0">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-    </Button>
-    <Button Color="Color.Ghost" class="absolute top-0 right-0">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-        </svg>
-    </Button>
-</div>
+<Header Recipe="Recipe" OnDelete="HandleDelete" />
 
-<div class="w-full p-4 bg-black">
-    <div class="w-full p-6 bg-base-100 rounded-2xl">
-        <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
-        <Badge Color="Color.Ghost">
-            Veganskt
-        </Badge>
-        <Badge Color="Color.Ghost">
-            Hög protein
-        </Badge>
-        <div class="pt-6">
-            <div class="rich-preview">
-                @(
-                    (MarkupString)Recipe.Html
-                    )
-            </div>
-        </div>
-    </div>
-</div>
+<Body Recipe="Recipe" />
 
 @code {
     [Parameter]
     public RecipeDto Recipe { get; set; }
+
+    private async Task HandleDelete()
+    {
+        await Toast.Make("Recipe was deleted", ToastDuration.Long).Show(default);
+        NavigationManager.NavigateTo("/");
+    }
 }

@@ -11,12 +11,10 @@
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        private string dbFolderPath, filePath,
-            dbFullPath;
-        private RichTextEditor refRichText;
+        [Inject]
+        public IJSRuntime JsRuntime { get; set; }
 
-        private string html,
-            delta;
+        private string filePath;
 
         private bool isLoading = true;
         private List<RecipeDto> recipes;
@@ -37,21 +35,13 @@
             {
                 recipes = await RecipeService.GetAll();
                 isLoading = false;
-            }
-        }
 
-        private async Task Save()
-        {
-            //var recipe = new Recipe
-
-            try
-            {
-                var recipes = await Db.GetAllAsync();
-                await Toast.Make(recipes?.Count().ToString()).Show(default);
-            }
-            catch (Exception ex)
-            {
-                await Toast.Make(ex.Message, ToastDuration.Long).Show(default);
+#if DEBUG
+                TimeoutHelper.SetTimeout(async () =>
+                {
+                    await ScrollToStart();
+                }, 1000);
+#endif
             }
         }
 
@@ -60,10 +50,13 @@
             await RecipeService.Create(new RecipeDto
             {
                 Title = "Random" + Guid.NewGuid().ToString().Substring(0, 5),
-                Delta = "asd",
-                Html = "dsa"
             });
             recipes = await RecipeService.GetAll();
+        }
+
+        private async Task ScrollToStart()
+        {
+            await JsRuntime.InvokeVoidAsync("scrollTo", "index-start");
         }
     }
 }

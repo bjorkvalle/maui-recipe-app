@@ -9,3 +9,5 @@ global using bjorkvalle.logic.Dtos;
 global using bjorkvalle.logic.Services;
 global using bjorkvalle.UI.Components;
 global using bjorkvalle.app.Utilities;
+global using bjorkvalle.infrastructure.Helpers;
+global using Microsoft.JSInterop;

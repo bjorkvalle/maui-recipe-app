@@ -1,29 +1,69 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 @inject IRecipeService RecipeService
 
-<Heading Size="HeadingSize.H3">RecipeList</Heading>
-
-<ul class="menu bg-base-200 rounded-box">
+<div class="flex flex-col gap-6">
     <Loop TItem="RecipeListItem" Items="Recipes" Context="item">
-        <li><a href="@($"recipes/{item.Id}")" title="@item.Title" class="flex">@item.Title</a></li>
-        @*<li><Button Clicked="(() => Delete(item.Id))">@item.Title</Button></li>*@
+        <div class="w-full">
+            <div class="relative rounded-t">
+                <img src="@item.CoverImg" class="w-full object-cover rounded-t" />
+            </div>
+            <div class="bg-base-100 pb-8 px-6 pt-6 rounded-b">
+                <a href="@($"recipes/{item.Id}")">
+                    <Heading Size="HeadingSize.H3" class="text-base-content">@item.Title</Heading>
+                </a>
+                <Badge Color="Color.Ghost">
+                    Veganskt
+                </Badge>
+                <Badge Color="Color.Ghost">
+                    Hög protein
+                </Badge>
+            </div>
+        </div>
+
+        @*<div class="w-full">
+            @if (!string.IsNullOrEmpty(item.CoverImg))
+            {
+                <div class="relative rounded-t">
+                    <img src="@item.CoverImg" class="w-full object-cover rounded-t" />
+                    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent"></div>
+                </div>
+            }
+            <div class="px-2 relative -mt-4">
+                <div class="px-6 pb-6 pt-4 bg-base-100 rounded">
+                    <a href="@($"recipes/{item.Id}")">
+                        <Heading Size="HeadingSize.H3" class="text-base-content">@item.Title</Heading>
+                    </a>
+                    <Badge Color="Color.Ghost">
+                        Veganskt
+                    </Badge>
+                    <Badge Color="Color.Ghost">
+                        Hög protein
+                    </Badge>
+                </div>
+            </div>
+        </div>*@
+
+        @*<div class="w-full p-6 bg-base-100 rounded">
+            <div class="relative mb-6 rounded">
+                <img src="@item.CoverImg" class="w-full object-cover rounded" />
+                <div class="absolute top-0 left-0 w-full h-32 rounded-t bg-gradient-to-b from-black to-transparent"></div>
+            </div>
+            <a href="@($"recipes/{item.Id}")">
+                <Heading Size="HeadingSize.H3" class="text-base-content">@item.Title</Heading>
+            </a>
+            <Badge Color="Color.Ghost">
+                Veganskt
+            </Badge>
+            <Badge Color="Color.Ghost">
+                Hög protein
+            </Badge>
+        </div>*@
     </Loop>
-</ul>
+</div>
 
 @code {
     [Parameter]
     public List<RecipeDto> Items { get; set; }
-
-    //private List<RecipeListItem> recipes;
-
-    //protected override void OnInitialized()
-    //{
-    //    recipes = Items.Select(x => new RecipeListItem
-    //        {
-    //            Id = x.Id,
-    //            Title = x.Title
-    //        }).ToList();
-    //}
 
     private async Task Delete(Guid recipeId)
     {
@@ -33,6 +73,7 @@
     private List<RecipeListItem> Recipes => Items.Select(x => new RecipeListItem
         {
             Id = x.Id,
-            Title = x.Title
+            Title = x.Title,
+            CoverImg = x.CoverImg
         }).ToList();
 }

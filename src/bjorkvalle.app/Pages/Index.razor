@@ -1,37 +1,28 @@
 ﻿@page "/"
-@inject IJSRuntime JsRuntime
 @using bjorkvalle.app.Features.Recipes
 
-@*@inherits ComponentBase*@
-
-<Heading Size="HeadingSize.H1">Fuuds!</Heading>
-
-<Button Clicked="Insert">Insert+</Button>
-
-@if(!recipes.IsNullOrEmpty())
-{
-    <RecipeList Items="recipes" />
-}
-
-<Loading IsLoading="isLoading" />
-
-@*<Paragraph>Currently selected: @dbFullPath</Paragraph>*@
-
-        @*<Button Color="Color.Primary" Clicked="(() => PickFolder())">Pick folder</Button>*@
-@*<div class="flex gap-2">
-    @if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
-    {
-        <Button Color="Color.Primary" Clicked="SelectFolderAndCreateDatabase">Init db</Button>
-    }
-
-    @if (DeviceInfo.Current.Platform == DevicePlatform.WinUI
-    || DeviceInfo.Current.Platform == DevicePlatform.Android)
-    {
-        <Button Color="Color.Secondary" Clicked="(() => PickFile())">Pick db file</Button>
-    }
-</div>
-
-<div class="mt-2 flex-column flex-col gap-2">
-    <RichTextEditor class="bg-white" @ref="refRichText" @bind-Html="@html" @bind-Delta="@delta" />
-    <Button Color="Color.Primary" Clicked="Save">Save recipe</Button>
+@*<div class="hero min-h-screen" style="background-image: url('./images/meatball3.jpg');">
+    <div class="hero-overlay bg-opacity-60"></div>
+    <div class="hero-content text-center text-neutral-content">
+        <div class="max-w-md">
+            <h1 class="mb-5 text-5xl font-bold">La masă</h1>
+            <Button Color="Color.Ghost" Shape="ButtonShape.Circle" Clicked="ScrollToStart">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                </svg>
+            </Button>
+        </div>
+    </div>
 </div>*@
+<div class="p-6 bg-black" id="index-start">
+    @*<Heading Size="HeadingSize.H1">Fuuds!</Heading>*@
+
+    <Button Clicked="Insert">Insert+</Button>
+
+    @if (!recipes.IsNullOrEmpty())
+    {
+        <RecipeList Items="recipes" />
+    }
+
+    <Loading IsLoading="isLoading" />
+</div>

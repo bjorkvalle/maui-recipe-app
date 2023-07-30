@@ -47,6 +47,9 @@ module.exports = {
             },
             backdropBrightness: {
                 25: '.25',
+            },
+            zIndex: {
+                '10000': '10000'
             }
         },
     },
