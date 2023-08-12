@@ -37,10 +37,10 @@
                 isLoading = false;
 
 #if DEBUG
-                TimeoutHelper.SetTimeout(async () =>
-                {
-                    await ScrollToStart();
-                }, 1000);
+                //TimeoutHelper.SetTimeout(async () =>
+                //{
+                //    await ScrollToStart();
+                //}, 1000);
 #endif
             }
         }
@@ -54,9 +54,9 @@
             recipes = await RecipeService.GetAll();
         }
 
-        private async Task ScrollToStart()
-        {
-            await JsRuntime.InvokeVoidAsync("scrollTo", "index-start");
-        }
+        //private async Task ScrollToStart()
+        //{
+        //    await JsRuntime.InvokeVoidAsync("scrollTo", "index-start");
+        //}
     }
 }

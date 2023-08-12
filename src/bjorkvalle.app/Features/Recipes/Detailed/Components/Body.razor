@@ -1,22 +1,32 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 
-<div class="w-full p-4 bg-black">
-    <div class="w-full p-6 bg-base-100 rounded">
-        <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
-        <Badge Color="Color.Ghost">
-            Veganskt
-        </Badge>
-        <Badge Color="Color.Ghost">
-            Hög protein
-        </Badge>
-        <div class="mt-6">
-            <div class="rich-preview">
-                @(
-                    (MarkupString)Recipe.Html
-                    )
+<div class="w-full p-4 bg-base-100">
+    <Card class="border border-base-300">
+        <figure class="px-8 pt-8">
+            <img src="@Recipe.CoverImg" class="rounded-lg" />
+        </figure>
+        @*<figure class="px-8 pt-8">
+            <img src="@Recipe.CoverImg" class="rounded-lg" />
+        </figure>*@
+        <CardBody>
+            <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
+            <CardActions Justify="Justify.Start">
+                <Badge Color="Color.Ghost">
+                    Veganskt
+                </Badge>
+                <Badge Color="Color.Ghost">
+                    Hög protein
+                </Badge>
+            </CardActions>
+            <div class="mt-4">
+                <div class="rich-preview">
+                    @(
+                        (MarkupString)Recipe.Html
+                        )
+                </div>
             </div>
-        </div>
-    </div>
+        </CardBody>
+    </Card>
 </div>
 
 @code {

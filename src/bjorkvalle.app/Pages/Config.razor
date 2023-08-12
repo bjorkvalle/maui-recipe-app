@@ -16,14 +16,14 @@
     </Text>
 </Paragraph>
 
-@if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
-{
+@*@if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)*@
+@*{*@
     <Heading Size="HeadingSize.H2">Create database</Heading>
 
     <CreateForm OnSave="HandleSave" />
 
     <Divider>Or</Divider>
-}
+@*}*@
 
 <Heading Size="HeadingSize.H2">Select database</Heading>
 

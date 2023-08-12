@@ -1,0 +1,34 @@
+﻿@page "/recipes/{id:guid}"
+@inject IRecipeService RecipeService
+@using bjorkvalle.app.Features.Recipes
+
+@if(isLoading)
+{
+    <Loading IsLoading="isLoading" />
+}
+else
+{
+    @if (!string.IsNullOrEmpty(recipe.Html))
+    {
+        <RecipeCard Recipe="recipe" />
+    }
+    else
+    {
+        <Heading Size="HeadingSize.H1">@recipe.Title</Heading>
+        <Alert Type="AlertTypes.Info">No HTML saved.</Alert>
+    }
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private RecipeDto recipe = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipe = await RecipeService.GetById(Id);
+        isLoading = false;
+    }
+}

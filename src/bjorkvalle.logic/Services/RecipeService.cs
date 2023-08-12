@@ -12,6 +12,7 @@
     public class RecipeService : IRecipeService
     {
         private readonly DatabaseHandler<Recipe> _db;
+        private List<RecipeDto> _recipes;
 
         public RecipeService(DatabaseHandler<Recipe> db)
         {
@@ -20,9 +21,12 @@
 
         public async Task<List<RecipeDto>> GetAll()
         {
-            var entities = await _db.GetAllAsync();
-            var dtos = entities?.Select(x => MapToDto(x)).ToList() ?? new();
-            return dtos;
+            if (_recipes == null)
+            {
+                var entities = await _db.GetAllAsync();
+                _recipes = entities?.Select(x => MapToDto(x)).ToList() ?? new();
+            }
+            return _recipes;
         }
 
         public async Task<RecipeDto> GetById(Guid id)

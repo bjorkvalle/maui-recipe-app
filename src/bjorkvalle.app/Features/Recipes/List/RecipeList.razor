@@ -3,22 +3,24 @@
 
 <div class="flex flex-col gap-6">
     <Loop TItem="RecipeListItem" Items="Recipes" Context="item">
-        <div class="w-full">
-            <div class="relative rounded-t">
-                <img src="@item.CoverImg" class="w-full object-cover rounded-t" />
-            </div>
-            <div class="bg-base-100 pb-8 px-6 pt-6 rounded-b">
-                <a href="@($"recipes/{item.Id}")">
-                    <Heading Size="HeadingSize.H3" class="text-base-content">@item.Title</Heading>
-                </a>
-                <Badge Color="Color.Ghost">
-                    Veganskt
-                </Badge>
-                <Badge Color="Color.Ghost">
-                    Hög protein
-                </Badge>
-            </div>
-        </div>
+        <a href="@($"recipes/{item.Id}")">
+            <Card class="bg-base-100 border border-base-300 shadow-lg hover:shadow-xl">
+                <figure>
+                    <img src="@item.CoverImg" />
+                </figure>
+                <CardBody>
+                    <CardTitle>@item.Title</CardTitle>
+                    <CardActions Justify="Justify.Start">
+                        <Badge Color="Color.Ghost">
+                            Veganskt
+                        </Badge>
+                        <Badge Color="Color.Ghost">
+                            Hög protein
+                        </Badge>
+                    </CardActions>
+                </CardBody>
+            </Card>
+        </a>
 
         @*<div class="w-full">
             @if (!string.IsNullOrEmpty(item.CoverImg))
