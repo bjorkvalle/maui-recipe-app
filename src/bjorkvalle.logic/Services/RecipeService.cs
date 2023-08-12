@@ -11,24 +11,17 @@
 
     public class RecipeService : IRecipeService
     {
-        private readonly DatabaseHandler<Recipe> _db;
-        private List<RecipeDto> _recipes;
-        private bool isDirty;
+        private readonly Repository<Recipe> _db;
 
-        public RecipeService(DatabaseHandler<Recipe> db)
+        public RecipeService(Repository<Recipe> db)
         {
             _db = db;
         }
 
         public async Task<List<RecipeDto>> GetAll()
         {
-            if (_recipes == null || isDirty)
-            {
-                var entities = await _db.GetAllAsync();
-                _recipes = entities?.Select(x => MapToDto(x)).ToList() ?? new();
-                isDirty = false;
-            }
-            return _recipes;
+            var entities = await _db.GetAllAsync();
+            return entities?.Select(x => MapToDto(x)).ToList() ?? new();
         }
 
         public async Task<RecipeDto> GetById(Guid id)
@@ -40,13 +33,11 @@
 
         public async Task Delete(Guid recipeId)
         {
-            isDirty = true;
             await _db.DeleteAsync(recipeId);
         }
 
         public async Task<Guid> Create(RecipeDto dto)
         {
-            isDirty = true;
             var entity = MapToEntity(dto);
             entity.Id = Guid.NewGuid();
             await _db.CreateAsync(entity);
@@ -55,7 +46,6 @@
 
         public async Task Update(RecipeDto dto)
         {
-            isDirty = true;
             var entity = MapToEntity(dto);
             await _db.UpdateAsync(entity);
         }

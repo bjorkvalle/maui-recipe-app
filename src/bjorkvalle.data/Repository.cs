@@ -1,99 +1,64 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using SQLite;
 
-//namespace bjorkvalle.logic
-//{
-//    public interface IRepository<T> where T : class
-//    {
-//        IQueryable<T> GetAll();
-//        Task<T> GetByIdAsync(int id);
-//        Task<T> CreateAsync(T entity);
-//        Task<IEnumerable<T>> CreateBatchAsync(IEnumerable<T> entities);
-//        Task<T> UpdateAsync(T oldEntity, T newEntity);
-//        Task<T> DeleteAsync(int id);
-//        Task<IEnumerable<T>> DeleteBatchAsync(IEnumerable<T> entities);
-//    }
+namespace bjorkvalle.data
+{
+    public interface IRepository<T> where T : new()
+    {
+        Task CreateAsync(T entity);
+        Task DeleteAsync(Guid id);
+        Task<List<T>> GetAllAsync();
+        Task<T> GetByIdAsync(Guid id);
+        Task UpdateAsync(T entity);
+    }
 
-//    public class Repository<T> : IRepository<T> where T : class
-//    {
-//        private readonly DatabaseHandler _db;
-//        //private readonly DbSet<T> _entities;
+    public class Repository<T> : IRepository<T> where T : new()
+    {
+        private readonly DatabaseContext _context;
+        private SQLiteAsyncConnection _connection;
 
-//        //public Repository(SDPSContext context)
-//        //{
-//        //    _context = context;
-//        //    _entities = context.Set<T>();
-//        //}
+        public Repository(DatabaseContext context)
+        {
+            _context = context;
+        }
 
-//        public IQueryable<T> GetAll()
-//        {
-//            return _entities;
-//        }
+        public async Task<T> GetByIdAsync(Guid id)
+        {
+            await Init();
+            var entity = await _connection.FindAsync<T>(id);
+            return entity;
+        }
 
-//        public async Task<T> GetByIdAsync(int id)
-//        {
-//            var entity = await _entities.FindAsync(id);
-//            return entity;
-//        }
+        public async Task<List<T>> GetAllAsync()
+        {
+            await Init();
+            var entities = await _connection.Table<T>().ToListAsync();
+            return entities;
+        }
 
-//        public async Task<T> CreateAsync(T entity)
-//        {
-//            if (entity == null)
-//                throw new ArgumentNullException("entity");
+        public async Task CreateAsync(T entity)
+        {
+            await Init();
+            await _connection.InsertAsync(entity);
+        }
 
-//            await _entities.AddAsync(entity);
-//            await _context.SaveChangesAsync();
+        public async Task UpdateAsync(T entity)
+        {
+            await Init();
+            var updatedRows = await _connection.UpdateAsync(entity);
+        }
 
-//            return entity;
-//        }
+        public async Task DeleteAsync(Guid id)
+        {
+            await Init();
+            var removedRows = await _connection.DeleteAsync<T>(id);
+        }
 
-//        public async Task<IEnumerable<T>> CreateBatchAsync(IEnumerable<T> entities)
-//        {
-//            if (entities == null)
-//                throw new ArgumentNullException("entity");
+        private async Task Init()
+        {
+            _connection = await _context.TryGetConnectionOrDefault();
 
-//            await _entities.AddRangeAsync(entities);
-//            await _context.SaveChangesAsync();
-
-//            return _entities;
-//        }
-
-//        public async Task<T> UpdateAsync(T oldEntity, T newEntity)
-//        {
-//            if (oldEntity == null || newEntity == null)
-//                throw new ArgumentNullException("entity");
-
-//            _context.Entry(oldEntity).CurrentValues.SetValues(newEntity);
-//            await _context.SaveChangesAsync();
-
-//            return oldEntity;
-//        }
-
-//        public async Task<T> DeleteAsync(int id)
-//        {
-//            var entity = await _entities.FindAsync(id);
-
-//            if (entity == null)
-//                throw new ArgumentNullException("entity");
-
-//            _entities.Remove(entity);
-//            await _context.SaveChangesAsync();
-
-//            return entity;
-//        }
-
-//        public async Task<IEnumerable<T>> DeleteBatchAsync(IEnumerable<T> entities)
-//        {
-//            if (entities == null)
-//                throw new ArgumentNullException("entity");
-
-//            _entities.RemoveRange(entities);
-//            await _context.SaveChangesAsync();
-
-//            return entities;
-//        }
-//    }
-//}
+            if (_connection == null)
+                throw new Exception("Lost db connection");
+        }
+    }
+}

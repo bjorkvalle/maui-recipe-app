@@ -23,8 +23,9 @@ namespace bjorkvalle.app
             builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddSingleton(typeof(data.DatabaseHandler<>));
             builder.Services.AddSingleton(typeof(infrastructure.Utilities.Mapper<,>));
+            builder.Services.AddSingleton<data.DatabaseContext>();
+            builder.Services.AddScoped(typeof(data.Repository<>));
             builder.Services.AddScoped<IRecipeService, RecipeService>();
 
             return builder.Build();

@@ -2,11 +2,25 @@
 @using bjorkvalle.app.Features.Recipes
 @inject NavigationManager NavigationManager
 
-    <Heading Size="HeadingSize.H1">Edit recipe</Heading>
+<Heading Size="HeadingSize.H1" class="flex items-center gap-2">
+    @if (IsBackUrl)
+    {
+        <a href="@BackUrl" class="btn btn-ghost p-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+        </a>
+    }
+    Edit recipe
+</Heading>
 
-    <RecipeForm OnSave="HandleSave" Id="Id" />
+<RecipeForm OnSave="HandleSave" Id="Id" />
 
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "backUrl")]
+    public string BackUrl { get; set; }
+
     [Parameter]
     public Guid Id { get; set; }
 
@@ -26,4 +40,6 @@
     {
         await Toast.Make("Saved").Show(default);
     }
+
+    private bool IsBackUrl => !string.IsNullOrEmpty(BackUrl);
 }

@@ -3,7 +3,7 @@
     public partial class Index : ComponentBase
     {
         [Inject]
-        public DatabaseHandler<Recipe> Db { get; set; }
+        public DatabaseContext Db { get; set; }
 
         [Inject]
         public IRecipeService RecipeService { get; set; }
