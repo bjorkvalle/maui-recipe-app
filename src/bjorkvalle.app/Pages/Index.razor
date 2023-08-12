@@ -14,10 +14,16 @@
         </div>
     </div>
 </div>*@
-<div id="index-start">
-    <Heading Size="HeadingSize.H1" class="uppercase text-primary">La masă</Heading>
+<div id="index-start" class="mb-20">
+    <div class="px-6 py-8 bg-gradient-to-tr from-primary to-primary-focus rounded-box mb-6">
+        <Heading Size="HeadingSize.H1" class="uppercase underline underline-offset-8 text-primary-content">La masă</Heading>
+    </div>
 
-    @*<Button Clicked="Insert">Insert+</Button>*@
+    @*
+        <h1 class="uppercase text-primary-content text-3xl font-extrabold">La masă!</h1>
+
+    <Button Clicked="Insert">Insert+</Button>
+    *@
 
     @if (!recipes.IsNullOrEmpty())
     {

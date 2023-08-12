@@ -5,6 +5,15 @@
 
 <Body Recipe="Recipe" />
 
+<footer class="footer footer-center p-4">
+    <div>
+        <small>
+            Added @Recipe.CreatedOn.ToShortDateString(). 
+            <Link NoRender="string.IsNullOrEmpty(Recipe.Source)" Color="Color.Primary" Href="@Recipe.Source">Source</Link>
+        </small>
+    </div>
+</footer>
+
 @code {
     [Parameter]
     public RecipeDto Recipe { get; set; }

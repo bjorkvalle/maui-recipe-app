@@ -24,7 +24,7 @@
             //SecureStorage.Default.RemoveAll();
             filePath = await SecureStorage.Default.GetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH);
 
-            if (!Db.TryDbConnection(filePath))
+            if (!await Db.TryDbConnection(filePath))
             {
                 SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_NAME);
                 SecureStorage.Remove(Constants.Storage.Keys.DB_FILE_PATH);

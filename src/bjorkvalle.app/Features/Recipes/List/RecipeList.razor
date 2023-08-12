@@ -5,13 +5,14 @@
     <Loop TItem="RecipeListItem" Items="Recipes" Context="item">
         <a href="@($"recipes/{item.Id}")">
             @*<Card class="bg-base-100 border border-base-300 shadow-lg hover:shadow-xl">*@
-            <Card class="bg-base-100 border border-base-300">
-                <figure>
+            @*<Card class="bg-base-100 border border-primary" IsCompact>*@
+            <Card class="bg-base-100 border border-base-300" IsCompact>
+                <figure class="border-b-4 border-primary">
                     <img src="@item.CoverImg" />
                 </figure>
                 <CardBody>
-                    <CardTitle>@item.Title</CardTitle>
-                    <CardActions Justify="Justify.Start">
+                    <Heading Size="HeadingSize.H2">@item.Title</Heading>
+                    <CardActions Justify="Justify.Start" class="pb-3">
                         <Badge Color="Color.Ghost">
                             Veganskt
                         </Badge>

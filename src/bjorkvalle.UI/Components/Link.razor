@@ -8,7 +8,7 @@
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public LinkColor Color { get; set; }
+    [Parameter] public Color Color { get; set; }
     [Parameter] public bool IsHover { get; set; }
     [Parameter] public string Href { get; set; }
 
@@ -16,7 +16,7 @@
     {
         classBuilder
             .Begin("link")
-            .AddClass("link-", ClassProvider.ColorClass(Color), !Color.Equals(LinkColor.None))
+            .AddClass("link-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
             .AddClass("link-hover", condition: IsHover);
     }
 }

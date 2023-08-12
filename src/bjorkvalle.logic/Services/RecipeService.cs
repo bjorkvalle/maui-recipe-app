@@ -40,6 +40,7 @@
         {
             var entity = MapToEntity(dto);
             entity.Id = Guid.NewGuid();
+            entity.CreatedOn = DateTime.UtcNow;
             await _db.CreateAsync(entity);
             return entity.Id;
         }
@@ -61,6 +62,7 @@
                 Source = entity.Source,
                 Html = entity.Html,
                 Delta = entity.Delta,
+                CreatedOn = entity.CreatedOn,
             };
         }
 
@@ -75,6 +77,7 @@
                 Source = dto.Source,
                 Html = dto.Html,
                 Delta = dto.Delta,
+                CreatedOn = dto.CreatedOn,
             };
         }
     }

@@ -23,5 +23,8 @@ namespace bjorkvalle.data.Entities
 
         [Column("delta")]
         public string Delta { get; set; }
+
+        [Column("created_on")]
+        public DateTime CreatedOn { get; set; }
     }
 }

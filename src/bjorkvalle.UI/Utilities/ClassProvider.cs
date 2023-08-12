@@ -43,6 +43,7 @@ namespace bjorkvalle.UI.Utilities
             Color.Neutral => "neutral",
             Color.Secondary => "secondary",
             Color.Accent => "accent",
+            Color.Link => "link",
             Color.Ghost => "ghost",
             Color.Info => "info",
             Color.Success => "success",
@@ -61,15 +62,6 @@ namespace bjorkvalle.UI.Utilities
             BadgeColor.Success => "success",
             BadgeColor.Warning => "warning",
             BadgeColor.Error => "error",
-            _ => null
-        };
-
-        public static string ColorClass(LinkColor color) => color switch
-        {
-            LinkColor.Primary => "primary",
-            LinkColor.Secondary => "secondary",
-            LinkColor.Accent => "accent",
-            LinkColor.Neutral => "neutral",
             _ => null
         };
 

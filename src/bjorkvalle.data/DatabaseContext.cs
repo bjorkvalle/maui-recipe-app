@@ -25,7 +25,7 @@ namespace bjorkvalle.data
             await Task.CompletedTask;
         }
 
-        public bool TryDbConnection(string filePath)
+        public async Task<bool> TryDbConnection(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return false;
@@ -34,7 +34,12 @@ namespace bjorkvalle.data
             var fileExists = File.Exists(filePath);
 
             if (fileExists)
+            {
                 _connection = new SQLiteAsyncConnection(filePath);
+
+                //migrations
+                await _connection.CreateTableAsync<Recipe>();
+            }
 
             return fileExists && _connection != null;
         }

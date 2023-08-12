@@ -18,7 +18,7 @@
     </Field>
     @if (!string.IsNullOrEmpty(model.CoverImg))
     {
-        <img src="@model.CoverImg" class="max-h-80" />
+        <img src="@model.CoverImg" class="max-h-80 rounded-box" />
     }
     <Field class="w-full">
         <LabelFor For="(() => model.Source)" IsRequired />

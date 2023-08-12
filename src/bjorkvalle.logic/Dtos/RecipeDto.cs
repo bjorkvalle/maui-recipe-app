@@ -9,5 +9,6 @@
         public string Source { get; set; }
         public string Html { get; init; }
         public string Delta { get; init; }
+        public DateTime CreatedOn { get; init; }
     }
 }
