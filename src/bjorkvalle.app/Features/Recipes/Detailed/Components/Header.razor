@@ -1,7 +1,7 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 @inject IRecipeService RecipeService
 
-<div class="relative">
+<div class="relative -mt-6 -ml-6 -mr-6">
     <img src="@Recipe.CoverImg" class="h-96 w-full object-cover bg-base-100" />
     @*<div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent"></div>
     <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-base-100 to-transparent"></div>*@
@@ -19,7 +19,7 @@
             </Button>
         </ToggleContent>
         <MenuContent>
-            <ul class="menu bg-base-200 w-56 rounded-box shadow">
+            <ul class="menu bg-base-100 w-56 rounded-box shadow">
                 <li>
                     <a href="@($"recipes/edit/{Recipe.Id}")">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
@@ -75,6 +75,7 @@
 
     private async Task ConfirmDelete()
     {
+        await refPopup.Close();
         await RecipeService.Delete(Recipe.Id);
         await OnDelete.InvokeAsync();
     }

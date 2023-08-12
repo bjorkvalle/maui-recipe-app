@@ -16,6 +16,8 @@ else
     {
         <Heading Size="HeadingSize.H1">@recipe.Title</Heading>
         <Alert Type="AlertTypes.Info">No HTML saved.</Alert>
+        <a href="/" class="btn btn-secondary">Back</a>
+        <a href="@($"recipes/edit/{recipe.Id}")" class="btn btn-primary">Edit</a>
     }
 }
 

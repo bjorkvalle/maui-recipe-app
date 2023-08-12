@@ -1,13 +1,29 @@
 ﻿@namespace bjorkvalle.app.Features.Recipes
 
+<div class="mt-4">
+    <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
+    <Badge Color="Color.Ghost">
+        Veganskt
+    </Badge>
+    <Badge Color="Color.Ghost">
+        Hög protein
+    </Badge>
+    <div class="mt-4">
+        <div class="rich-preview">
+            @(
+                (MarkupString)Recipe.Html
+                )
+        </div>
+    </div>
+</div>
+
+
+@*
 <div class="w-full p-4 bg-base-100">
     <Card class="border border-base-300">
         <figure class="px-8 pt-8">
             <img src="@Recipe.CoverImg" class="rounded-lg" />
         </figure>
-        @*<figure class="px-8 pt-8">
-            <img src="@Recipe.CoverImg" class="rounded-lg" />
-        </figure>*@
         <CardBody>
             <Heading Size="HeadingSize.H1" class="text-base-content">@Recipe.Title</Heading>
             <CardActions Justify="Justify.Start">
@@ -27,7 +43,7 @@
             </div>
         </CardBody>
     </Card>
-</div>
+</div>*@
 
 @code {
     [Parameter]

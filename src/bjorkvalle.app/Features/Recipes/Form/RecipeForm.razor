@@ -11,8 +11,8 @@
     <Field class="w-full">
         <LabelFor For="(() => model.CoverImg)" IsRequired />
         <TextEdit ValueChanged="OnCoverSelect"
-                  ValueExpression="@( () => coverImgUrl)"
-                  Value="@coverImgUrl"
+                  ValueExpression="@(() => model.CoverSrc)"
+                  Value="@model.CoverSrc"
                   Placeholder="https://"></TextEdit>
         <ValidationMessage For="(() => model.CoverImg)" />
     </Field>
@@ -47,7 +47,7 @@
     public EventCallback OnSave { get; set; }
 
     private CreateFormModel model = new();
-    private string error, coverImgUrl;
+    private string error;
     private byte[] coverImg;
 
     protected override async Task OnInitializedAsync()
@@ -61,6 +61,7 @@
                     Delta = dto.Delta,
                     Html = dto.Html,
                     CoverImg = dto.CoverImg,
+                    CoverSrc = dto.CoverSrc,
                     Source = dto.Source,
                 };
         }
@@ -69,6 +70,8 @@
     private async Task OnCoverSelect(string url)
     {
         error = string.Empty;
+        model.CoverImg = string.Empty;
+        model.CoverSrc = url;
 
         if (Uri.TryCreate(url, UriKind.Absolute, out Uri resultUri))
         {
@@ -84,11 +87,11 @@
                 }
                 catch (Exception ex)
                 {
-                    error = ex.Message;
+                    model.CoverImg = "no image";
+                    await Toast.Make(ex.Message, ToastDuration.Long).Show(default);
                 }
             }
         }
-        coverImgUrl = url;
     }
 
     private async Task Save()
@@ -106,19 +109,20 @@
                     Html = model.Html,
                     Delta = model.Delta,
                     CoverImg = model.CoverImg,
+                    CoverSrc = model.CoverSrc,
                     Source = model.Source,
                 };
 
             if (Id.HasValue)
             {
                 await RecipeService.Update(dto);
+                NavigationManager.NavigateTo($"recipes/{dto.Id}");
             }
             else
             {
-                await RecipeService.Create(dto);
+                var id = await RecipeService.Create(dto);
+                NavigationManager.NavigateTo($"recipes/{id}");
             }
-
-            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {

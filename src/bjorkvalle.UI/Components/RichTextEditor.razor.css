@@ -1,0 +1,5 @@
+::deep .ql-editor h1, ::deep .ql-editor h2,
+::deep .ql-editor p, ::deep .ql-editor a,
+::deep .ql-editor ul {
+    margin-bottom: .5rem !important;
+}

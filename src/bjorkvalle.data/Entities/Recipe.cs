@@ -12,6 +12,9 @@ namespace bjorkvalle.data.Entities
         [Column("cover_image")]
         public string CoverImg { get; set; }
 
+        [Column("cover_src")]
+        public string CoverSrc { get; set; }
+
         [Column("source")]
         public string Source { get; set; }
 
