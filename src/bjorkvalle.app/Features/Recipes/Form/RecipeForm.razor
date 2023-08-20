@@ -27,7 +27,7 @@
     </Field>
     <Field class="w-full">
         <LabelFor For="(() => model.Html)" IsRequired />
-        <RichTextEditor class="bg-white" @bind-Delta="model.Delta" @bind-Html="model.Html" />
+        <RichTextEditor @bind-Delta="model.Delta" @bind-Html="model.Html" />
         <ValidationMessage For="(() => model.Html)" />
     </Field>
 

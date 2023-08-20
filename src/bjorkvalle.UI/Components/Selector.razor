@@ -1,0 +1,109 @@
+﻿@inherits UIComponentBase
+@typeparam TItem
+
+@if (!NoRender)
+{
+    <Dropdown @ref="bbm" IsMaximised>
+        <ToggleContent>
+            <div class="join w-full">
+                <input @attributes="AdditionalAttributes" class="@ClassNames" style="z-index:1000"
+                       disabled="@(isLoading || IsDisabled)" placeholder="@InputPlaceholder"
+                @onclick="ToggleMenu" @bind="@keyword" @bind:event="oninput" @onkeyup="KeySelect" />
+                <Button Clicked="ClearSearch" Color="@Color" Size="@Size" class="join-item"
+                        IsDisabled="@(isLoading || IsDisabled)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                    </svg>
+                </Button>
+            </div>
+        </ToggleContent>
+        <MenuContent>
+            <ListGroup class="max-h-80 overflow-y-auto overflow-x-hidden w-full shadow-xl">
+                <Loop TItem="KeyValuePair<TItem, string>" Items="SearchedItems" Context="item">
+                    <ListGroupItem Size="@Size" OnSelect="(() => Select(item))"
+                                   title="@item.Value" IsDisabled="isLoading">
+                        @item.Value
+                    </ListGroupItem>
+                </Loop>
+            </ListGroup>
+        </MenuContent>
+    </Dropdown>
+}
+
+@code {
+    [Parameter]
+    public TItem Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public Color Color { get; set; } 
+
+    [Parameter]
+    public Size Size { get; set; }
+
+    [Parameter]
+    public Dictionary<TItem, string> Items { get; set; }
+
+    [Parameter] 
+    public bool IsOutline { get; set; }
+
+    //private KeyValuePair<TItem, string> selected;
+    private Dropdown bbm;
+    private string keyword;
+    private bool isLoading;
+
+    protected override void OnParametersSet()
+    {
+        classBuilder
+            .Begin("input join-item w-full")
+            .AddClass("input-", "bordered", condition: IsOutline)
+            .AddClass("input-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+            .AddClass("input-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+            //.AddClass("active", Value != null && Items != null && Items.ContainsKey(Value))
+            ;
+    }
+
+    private async Task KeySelect(KeyboardEventArgs e)
+    {
+        if (bbm.IsOpen && SearchedItems != null && SearchedItems.Any() && e.Code == "Enter")
+            await Select(SearchedItems.First());
+    }
+
+    private void ToggleMenu()
+    {
+        if (!bbm.IsOpen)
+            bbm.Toggle();
+    }
+
+    private async Task Select(KeyValuePair<TItem, string> item)
+    {
+        isLoading = true;
+        Value = item.Key;
+        await ValueChanged.InvokeAsync(Value);
+        bbm.Toggle();
+        isLoading = false;
+        keyword = string.Empty;
+    }
+
+    private async Task ClearSearch()
+    {
+        Value = default;
+        await ValueChanged.InvokeAsync(Value);
+        isLoading = true;
+        keyword = string.Empty;
+        isLoading = false;
+    }
+
+    private Dictionary<TItem, string> SearchedItems => Items
+       ?.WhereIf(!string.IsNullOrEmpty(keyword), x => x.Value.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+       .ToDictionary(x => x.Key, x => x.Value) ?? new();
+
+    private string InputPlaceholder => Value != null && Items != null
+        ? Items.ValueOrDefault(Value, "Search..")
+        : "Search..";
+}

@@ -1,19 +1,50 @@
 ﻿@namespace bjorkvalle.UI.Components
 @inherits UIComponentBase
-@typeparam TItem
 
 @if (!NoRender)
 {
-    @ChildContent
+    <li @attributes="AdditionalAttributes" class="@ClassNames" @onfocusin="OnFocusIn" @onfocusout="OnFocusOut"
+        role="list" tabindex="0" disabled="@IsDisabled" @onclick="Select" @onkeyup="KeySelect">
+        <a>
+
+        @ChildContent
+        </a>
+    </li>
 }
 
 @code {
-    [CascadingParameter] ListGroup<TItem> ListGroup { get; set; }
-    [EditorRequired, Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    //[Parameter] public Size Size { get; set; }
+    //[Parameter] public Color Color { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnSelect { get; set; }
 
-    protected override void OnInitialized()
+    private bool isFocused;
+
+    protected override void OnParametersSet()
     {
-        if (ListGroup == null)
-            throw new ArgumentNullException(nameof(ListGroup), $"{nameof(ListGroupItem<TItem>)} must exist within a (${nameof(ListGroup)})");
+        //classBuilder
+        //    .Begin("list-group-item")
+        //    .AddClass("list-group-item-", ClassProvider.SizeClass(Size), !Size.Equals(Size.Default))
+        //    .AddClass("list-group-item-", ClassProvider.ColorClass(Color), !Color.Equals(Color.None))
+        //    .AddClass("active", condition: IsActive)
+        //    ;
     }
+
+
+    private async Task Select(MouseEventArgs e)
+    {
+        if (OnSelect.HasDelegate)
+            await OnSelect.InvokeAsync(e);
+    }
+
+    private async Task KeySelect(KeyboardEventArgs e)
+    {
+        if (isFocused && (e.Code == "Space" || e.Code == "Enter"))
+            await Select(null);
+    }
+
+    private void OnFocusIn() => isFocused = true;
+    private void OnFocusOut() => isFocused = false;
 }

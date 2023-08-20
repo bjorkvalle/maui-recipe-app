@@ -47,3 +47,8 @@ function disableScroll(disable) {
         document.body.style.overflow = '';
     }
 }
+
+function setDaisyUITheme(theme) {
+    const bodyElement = document.querySelector('html');
+    bodyElement.setAttribute('data-theme', theme);
+}

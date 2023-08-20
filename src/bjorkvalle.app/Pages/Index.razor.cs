@@ -14,15 +14,54 @@
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
-        private string filePath;
-
+        private string filePath, currentTheme;
         private bool isLoading = true;
         private List<RecipeDto> recipes;
+        private Dropdown drp;
+        private readonly Dictionary<string, string> themeItems =
+            new()
+            {
+                { "wireframe", "Wireframe" },
+                { "light", "Light" },
+                { "dark", "Dark" },
+                { "cupcake", "Cupcake" },
+                { "bumblebee", "Bumblebee" },
+                { "emerald", "Emerald" },
+                { "corporate", "Corporate" },
+                { "synthwave", "Synthwave" },
+                { "retro", "Retro" },
+                { "cyberpunk", "Cyberpunk" },
+                { "valentine", "Valentine" },
+                { "halloween", "Halloween" },
+                { "garden", "Garden" },
+                { "forest", "Forest" },
+                { "aqua", "Aqua" },
+                { "lofi", "Lo-fi" },
+                { "pastel", "Pastel" },
+                { "fantasy", "Fantasy" },
+                { "black", "Black" },
+                { "luxury", "Luxury" },
+                { "dracula", "Dracula" },
+                { "cmyk", "CMYK" },
+                { "autumn", "Autumn" },
+                { "business", "Business" },
+                { "acid", "Acid" },
+                { "lemonade", "Lemonade" },
+                { "night", "Night" },
+                { "coffee", "Coffee" },
+                { "winter", "Winter" },
+            };
 
         protected override async Task OnInitializedAsync()
         {
             //SecureStorage.Default.RemoveAll();
-            filePath = await SecureStorage.Default.GetAsync(Constants.Storage.Keys.DB_FILE_FULLPATH);
+            filePath = await SecureStorage.Default.GetAsync(
+                Constants.Storage.Keys.DB_FILE_FULLPATH
+            );
+            currentTheme = await SecureStorage.Default.GetAsync(
+                Constants.Storage.Keys.THEME
+            );
+            await SetTheme(currentTheme);
 
             if (!await Db.TryDbConnection(filePath))
             {
@@ -45,13 +84,14 @@
             }
         }
 
-        private async Task Insert()
+        private async Task SetTheme(string theme)
         {
-            await RecipeService.Create(new RecipeDto
-            {
-                Title = "Random" + Guid.NewGuid().ToString().Substring(0, 5),
-            });
-            recipes = await RecipeService.GetAll();
+            if (string.IsNullOrEmpty(theme))
+                theme = "wireframe";
+
+            currentTheme = theme;
+            await SecureStorage.SetAsync(Constants.Storage.Keys.THEME, theme);
+            await JsRuntime.InvokeVoidAsync("setDaisyUITheme", theme);
         }
 
         //private async Task ScrollToStart()

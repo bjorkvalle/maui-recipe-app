@@ -5,7 +5,7 @@
 {
     @if (editorEnabled)
     {
-        <div id="toolbar">
+        <div id="toolbar" class="bg-white">
             <div class="ql-formats">
                 <select class="ql-font">
                     <option selected=""></option>
@@ -138,7 +138,7 @@
     protected override void OnParametersSet()
     {
         classBuilder
-            .Begin("");
+            .Begin("bg-base-100 text-base-content");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

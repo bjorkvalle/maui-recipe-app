@@ -33,13 +33,19 @@
     public RenderFragment MenuContent { get; set; }
 
     /// <summary>
-    /// All elements are the maximum width of the dropdown menu.
+    /// All elements are the maximum width of the dropdown menu. Default is false
     /// </summary>
-    //[Parameter]
-    //public bool IsMaximised { get; set; }
+    [Parameter]
+    public bool IsMaximised { get; set; }
 
     [Parameter]
     public Align MenuAlignment { get; set; }
+
+    /// <summary>
+    /// Top or bottom. Default is bottom
+    /// </summary>
+    [Parameter]
+    public HorizontalAlign HorizontalAlign { get; set; }
 
     private bool isHiddenMenu = true;
 
@@ -52,13 +58,16 @@
     protected override void OnParametersSet()
     {
         classBuilder
-            .Begin("dropdown");
+            .Begin("dropdown")
+            .AddClass("w-full", condition: IsMaximised)
+            ;
     }
 
     private string MenuClass => new StringBuilder("dropdown-menu absolute z-10000")
         //.AppendIf(!isHiddenFilterMenu, " show")
-        //.AppendIf(IsMaximised, " w-full")
+        .AppendIf(IsMaximised, " w-full")
         .AppendIf(MenuAlignment.Equals(Align.Left), " left-0")
         .AppendIf(MenuAlignment.Equals(Align.Right), " right-0")
+        .AppendIf(HorizontalAlign.Equals(HorizontalAlign.Top), " bottom-full")
         .ToString();
 }

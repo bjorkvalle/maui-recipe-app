@@ -62,5 +62,10 @@
 
             return false;
         }
+
+        public static TValue ValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        {
+            return dictionary.TryGetValue(key, out TValue value) ? value : defaultValue;
+        }
     }
 }

@@ -50,6 +50,9 @@ module.exports = {
             },
             zIndex: {
                 '10000': '10000'
+            },
+            maxHeight: {
+                'screen-50': '50vh',
             }
         },
     },
